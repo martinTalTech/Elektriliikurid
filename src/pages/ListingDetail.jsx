@@ -54,9 +54,9 @@ export default function ListingDetail() {
   const images = listing.listing_images?.sort((a, b) => a.order - b.order) || []
 
   const specs = [
-    { label: 'Aastakäik', value: listing.year },
+    { label: 'Aasta', value: listing.year },
     { label: 'Värvus', value: listing.color },
-    { label: 'Seisund', value: getConditionLabel(listing.condition) },
+    { label: 'Seisukord', value: getConditionLabel(listing.condition) },
     { label: 'Läbisõit', value: listing.mileage_km ? `${listing.mileage_km.toLocaleString('et')} km` : null },
     { label: 'Mootori võimsus', value: listing.motor_power_w ? `${listing.motor_power_w} W` : null },
     { label: 'Aku mahtuvus', value: listing.battery_capacity_wh ? `${listing.battery_capacity_wh} Wh` : null },

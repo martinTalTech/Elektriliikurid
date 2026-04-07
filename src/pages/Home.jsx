@@ -65,9 +65,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { icon: <Zap className="w-8 h-8 text-primary-600" />, title: 'Ainult elektriliikurid', desc: 'Spetsialiseeritud platvorm — leiad täpselt seda, mida otsid' },
+              { icon: <Zap className="w-8 h-8 text-primary-600" />, title: 'Ainult elektriliikurid', desc: 'Fokuseeritud platvorm — leia täpselt see, mida otsid' },
               { icon: <ShieldCheck className="w-8 h-8 text-primary-600" />, title: 'Turvaline tehing', desc: 'Registreeritud kasutajad, läbipaistev ajalugu' },
-              { icon: <TrendingUp className="w-8 h-8 text-primary-600" />, title: 'Kasvav kogukond', desc: 'Sadu aktiivset kuulutust üle Eesti' },
+              { icon: <TrendingUp className="w-8 h-8 text-primary-600" />, title: 'Kasvav kogukond', desc: 'Kuulutused üle Eesti' },
             ].map(f => (
               <div key={f.title} className="bg-white rounded-xl p-6 flex gap-4 items-start border border-gray-100">
                 {f.icon}
