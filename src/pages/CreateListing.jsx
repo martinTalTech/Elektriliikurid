@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Check, ChevronRight, ChevronLeft, Upload, X } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
-import { SCOOTER_BRANDS, CROSS_BRANDS, CONDITIONS } from '../constants/brands'
+import { SCOOTER_BRANDS, CROSS_BRANDS, MOPED_BRANDS, EBIKE_BRANDS, CONDITIONS } from '../constants/brands'
 import { COUNTIES } from '../constants/counties'
 import { getStripe } from '../lib/stripe'
 
@@ -31,7 +31,11 @@ export default function CreateListing() {
   )
 
   const set = (key, val) => setData(d => ({ ...d, [key]: val }))
-  const brands = data.vehicle_type === 'cross' ? CROSS_BRANDS : SCOOTER_BRANDS
+  const brands =
+    data.vehicle_type === 'cross' ? CROSS_BRANDS :
+      data.vehicle_type === 'mopeed' ? MOPED_BRANDS :
+        data.vehicle_type === 'jalgratas' ? EBIKE_BRANDS :
+          SCOOTER_BRANDS
 
   const autoTitle = () => {
     if (data.brand && data.model && data.year) {
@@ -105,11 +109,10 @@ export default function CreateListing() {
       <div className="flex items-center mb-8 overflow-x-auto pb-2">
         {STEPS.map((s, i) => (
           <div key={s} className="flex items-center flex-shrink-0">
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
-              i < step ? 'bg-primary-600 text-white' :
-              i === step ? 'bg-primary-100 text-primary-700 border-2 border-primary-500' :
-              'bg-gray-100 text-gray-400'
-            }`}>
+            <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${i < step ? 'bg-primary-600 text-white' :
+                i === step ? 'bg-primary-100 text-primary-700 border-2 border-primary-500' :
+                  'bg-gray-100 text-gray-400'
+              }`}>
               {i < step ? <Check className="w-4 h-4" /> : i + 1}
             </div>
             <span className={`ml-2 text-sm hidden sm:block ${i === step ? 'font-medium text-primary-700' : 'text-gray-500'}`}>{s}</span>
@@ -125,8 +128,13 @@ export default function CreateListing() {
             <h2 className="font-semibold text-lg mb-4">Sõiduki andmed</h2>
             <div>
               <label className="label">Sõiduki tüüp *</label>
-              <div className="grid grid-cols-2 gap-3">
-                {[{ v: 'scooter', icon: '🛴', label: 'Tõukeratas' }, { v: 'cross', icon: '🏍️', label: 'Elektro-krossika' }].map(t => (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { v: 'scooter', icon: '🛴', label: 'Tõukeratas' },
+                  { v: 'cross', icon: '🏍️', label: 'Elektri krossikas' },
+                  { v: 'mopeed', icon: '🛵', label: 'Elektri mopeed' },
+                  { v: 'jalgratas', icon: '🚲', label: 'Elektri jalgratas' }
+                ].map(t => (
                   <button
                     key={t.v}
                     onClick={() => set('vehicle_type', t.v)}
