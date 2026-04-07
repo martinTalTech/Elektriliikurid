@@ -1,11 +1,15 @@
 import { useState } from 'react'
 import { ChevronDown, X } from 'lucide-react'
-import { SCOOTER_BRANDS, CROSS_BRANDS, CONDITIONS } from '../../constants/brands'
+import { SCOOTER_BRANDS, CROSS_BRANDS, MOPED_BRANDS, EBIKE_BRANDS, CONDITIONS } from '../../constants/brands'
 import { COUNTIES } from '../../constants/counties'
 
 export default function Filters({ filters, onChange }) {
   const [open, setOpen] = useState({})
-  const brands = filters.vehicle_type === 'cross' ? CROSS_BRANDS : SCOOTER_BRANDS
+  const brands =
+    filters.vehicle_type === 'cross' ? CROSS_BRANDS :
+      filters.vehicle_type === 'mopeed' ? MOPED_BRANDS :
+        filters.vehicle_type === 'jalgratas' ? EBIKE_BRANDS :
+          SCOOTER_BRANDS
 
   const toggle = (key) => setOpen(prev => ({ ...prev, [key]: !prev[key] }))
   const set = (key, val) => onChange({ ...filters, [key]: val, page: 0 })
@@ -31,7 +35,13 @@ export default function Filters({ filters, onChange }) {
       {/* Tüüp */}
       <FilterSection title="Sõiduki tüüp" open={open.type} toggle={() => toggle('type')}>
         <div className="space-y-2">
-          {[{ value: '', label: 'Kõik' }, { value: 'scooter', label: '🛴 Tõukeratas' }, { value: 'cross', label: '🏍️ Elektro-krossika' }].map(opt => (
+          {[
+            { value: '', label: 'Kõik' },
+            { value: 'scooter', label: '🛴 Tõukeratas' },
+            { value: 'cross', label: '🏍️ Elektro-krossika' },
+            { value: 'mopeed', label: '🛵 Elektri mopeed' },
+            { value: 'jalgratas', label: '🚲 Elektri jalgratas' }
+          ].map(opt => (
             <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
