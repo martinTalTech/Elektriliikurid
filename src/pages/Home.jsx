@@ -38,7 +38,9 @@ export default function Home() {
                 <select value={search.type} onChange={e => setSearch(s => ({ ...s, type: e.target.value }))} className="input">
                   <option value="">Kõik tüübid</option>
                   <option value="scooter">🛴 Tõukeratas</option>
-                  <option value="cross">🏍️ Elektro-krossika</option>
+                  <option value="cross">🏍️ Elektri krossikas</option>
+                  <option value="mopeed">🛵 Elektri mopeed</option>
+                  <option value="jalgratas">🚲 Elektri jalgratas</option>
                 </select>
               </div>
               <div>
@@ -54,7 +56,7 @@ export default function Home() {
               </div>
             </div>
             <button type="submit" className="btn btn-primary btn-lg w-full mt-4 text-base">
-              <Search className="w-5 h-5 mr-2" /> Otsi liikureid
+              <Search className="w-5 h-5 mr-2" /> Detailsem otsing
             </button>
           </form>
         </div>
