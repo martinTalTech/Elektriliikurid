@@ -110,8 +110,8 @@ export default function CreateListing() {
         {STEPS.map((s, i) => (
           <div key={s} className="flex items-center flex-shrink-0">
             <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${i < step ? 'bg-primary-600 text-white' :
-                i === step ? 'bg-primary-100 text-primary-700 border-2 border-primary-500' :
-                  'bg-gray-100 text-gray-400'
+              i === step ? 'bg-primary-100 text-primary-700 border-2 border-primary-500' :
+                'bg-gray-100 text-gray-400'
               }`}>
               {i < step ? <Check className="w-4 h-4" /> : i + 1}
             </div>
@@ -291,8 +291,9 @@ export default function CreateListing() {
               <h3 className="font-medium mb-3">Vali pakett</h3>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { v: 'standard', label: 'Standard', price: '2.99€', desc: '30 päeva aktiivne', badge: null },
-                  { v: 'premium', label: 'Premium', price: '5.99€', desc: '60 päeva + esiletõstmine', badge: '⭐' },
+                  { v: 'kiirmüük', label: 'Kiirmüük', price: '1.99€', desc: '10 päeva aktiivne', badge: null },
+                  { v: 'standard', label: 'Standard', price: '3.99€', desc: '30 päeva aktiivne', badge: null },
+                  { v: 'premium', label: 'Premium', price: '5.99€', desc: '60 päeva aktiivne + esiletõstmine', badge: null },
                 ].map(plan => (
                   <button
                     key={plan.v}
@@ -315,7 +316,7 @@ export default function CreateListing() {
               disabled={loading}
               className="btn btn-primary btn-lg w-full text-base"
             >
-              {loading ? 'Töötleb...' : `Maksa ${data.plan === 'premium' ? '5.99€' : '2.99€'} ja avalda`}
+              {loading ? 'Töötleb...' : `Maksa ${data.plan === 'premium' ? '5.99€' : data.plan === 'standard' ? '3.99€' : '1.99€'} ja avalda`}
             </button>
             <p className="text-xs text-gray-400 text-center">Turvaline makse Stripe kaudu</p>
           </div>
