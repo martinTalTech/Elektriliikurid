@@ -26,6 +26,9 @@ export default function Navbar() {
             <Link to="/kuulutused" className="text-gray-600 hover:text-primary-600 transition-colors text-sm font-medium">
               Müügi kuulutused
             </Link>
+            <Link to="/kuulutused?tüüp=rent" className="text-gray-600 hover:text-primary-600 transition-colors text-sm font-medium">
+              Rendi kuulutused
+            </Link>
             <Link to="/meist" className="text-gray-600 hover:text-primary-600 transition-colors text-sm font-medium">
               Meist
             </Link>
@@ -65,7 +68,8 @@ export default function Navbar() {
 
       {mobileOpen && (
         <div className="md:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-2">
-          <Link to="/kuulutused" className="block py-2 text-gray-700" onClick={() => setMobileOpen(false)}>Kuulutused</Link>
+          <Link to="/kuulutused" className="block py-2 text-gray-700" onClick={() => setMobileOpen(false)}>Müügi kuulutused</Link>
+          <Link to="/kuulutused?tüüp=rent" className="block py-2 text-gray-700" onClick={() => setMobileOpen(false)}>Rendi kuulutused</Link>
           <Link to="/meist" className="block py-2 text-gray-700" onClick={() => setMobileOpen(false)}>Meist</Link>
           <Link to="/kkk" className="block py-2 text-gray-700" onClick={() => setMobileOpen(false)}>KKK</Link>
           <hr className="border-gray-100" />
