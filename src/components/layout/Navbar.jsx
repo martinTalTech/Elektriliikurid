@@ -19,7 +19,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16 items-center">
           <Link to="/" className="flex items-center gap-1.5 font-bold text-xl text-primary-600">
             <Zap className="w-6 h-6 fill-primary-600" />
-            <span>elektriliikurid</span>
+            <span>elektriliikur</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-6">

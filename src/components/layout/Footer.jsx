@@ -8,7 +8,7 @@ export default function Footer() {
         <div>
           <div className="flex items-center gap-1.5 font-bold text-xl text-white mb-3">
             <Zap className="w-5 h-5 fill-white" />
-            <span>elektriliikurid</span>
+            <span>elektriliikur.ee</span>
           </div>
           <p className="text-sm text-gray-400">Eesti suurim kasutatud elektriliikurite turg.</p>
         </div>

@@ -26,7 +26,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Zap className="w-10 h-10 fill-white" />
-            <h1 className="text-4xl md:text-5xl font-extrabold">elektriliikurid.ee</h1>
+            <h1 className="text-4xl md:text-5xl font-extrabold">elektriliikur.ee</h1>
           </div>
           <p className="text-xl text-primary-100 mb-8">
             Eesti suurim kasutatud elektriliikurite turg
