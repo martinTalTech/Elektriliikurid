@@ -92,8 +92,16 @@ export default function CreateListing() {
       const stripe = await getStripe()
       // In a real app, create checkout session via backend/edge function
       // For now, navigate to success
-      alert('Kuulutus loodud! Stripe integratsioon vajab backend seadistamist.')
-      navigate(`/kuulutused/${listing.id}`)
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+        },
+        body: JSON.stringify({ listing_id: listing.id, plan: data.plan })
+      })
+      const { url } = await res.json()
+      window.location.href = url
     } catch (err) {
       alert('Viga: ' + err.message)
     } finally {
