@@ -38,7 +38,7 @@ export default function Filters({ filters, onChange }) {
           {[
             { value: '', label: 'Kõik' },
             { value: 'scooter', label: '🛴 Tõukeratas' },
-            { value: 'cross', label: '🏍️ Elektro-krossika' },
+            { value: 'cross', label: '🏍️ Elektri krossikas' },
             { value: 'mopeed', label: '🛵 Elektri mopeed' },
             { value: 'jalgratas', label: '🚲 Elektri jalgratas' }
           ].map(opt => (
