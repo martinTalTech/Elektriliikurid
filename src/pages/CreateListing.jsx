@@ -16,6 +16,7 @@ export default function CreateListing() {
   const [loading, setLoading] = useState(false)
   const [images, setImages] = useState([])
   const [data, setData] = useState({
+    listing_type: 'sale',
     vehicle_type: '', brand: '', model: '', year: new Date().getFullYear(), color: '',
     motor_power_w: '', battery_capacity_wh: '', max_speed_kmh: '', range_km: '', mileage_km: '', charge_cycles: '',
     condition: 'good', title: '', description: '',
@@ -76,6 +77,11 @@ export default function CreateListing() {
         title: data.title, description: data.description,
         price: parseFloat(data.price), negotiable: data.negotiable,
         county: data.county, city: data.city,
+        listing_type: data.listing_type,
+        rent_price_day: data.rent_price_day ? parseFloat(data.rent_price_day) : null,
+        rent_min_days: data.rent_min_days ? parseInt(data.rent_min_days) : null,
+        rent_available_from: data.rent_available_from || null,
+        rent_available_to: data.rent_available_to || null,
       }).select().single()
 
       if (error) throw error
@@ -135,6 +141,24 @@ export default function CreateListing() {
           <div className="space-y-4">
             <h2 className="font-semibold text-lg mb-4">Sõiduki andmed</h2>
             <div>
+              <div>
+                <label className="label">Kuulutuse tüüp *</label>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  {[
+                    { v: 'sale', icon: '💰', label: 'Müük' },
+                    { v: 'rent', icon: '🔑', label: 'Rent' }
+                  ].map(t => (
+                    <button
+                      key={t.v}
+                      onClick={() => set('listing_type', t.v)}
+                      className={`p-4 rounded-xl border-2 text-center transition-colors ${data.listing_type === t.v ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-gray-200 hover:border-gray-300'}`}
+                    >
+                      <div className="text-3xl mb-1">{t.icon}</div>
+                      <div className="font-medium text-sm">{t.label}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
               <label className="label">Sõiduki tüüp *</label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
@@ -263,6 +287,29 @@ export default function CreateListing() {
               <label className="label">Hind (€) *</label>
               <input type="number" value={data.price} onChange={e => set('price', e.target.value)} placeholder="nt. 599" className="input" />
             </div>
+            {data.listing_type === 'rent' && (
+              <div className="space-y-4 border-t pt-4">
+                <h3 className="font-medium text-gray-700">Rendi tingimused</h3>
+                <div>
+                  <label className="label">Hind päevas (€) *</label>
+                  <input type="number" value={data.rent_price_day || ''} onChange={e => set('rent_price_day', e.target.value)} placeholder="nt. 15" className="input" />
+                </div>
+                <div>
+                  <label className="label">Minimaalne rendiaeg (päevad)</label>
+                  <input type="number" value={data.rent_min_days || 1} onChange={e => set('rent_min_days', e.target.value)} placeholder="nt. 1" className="input" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="label">Saadaval alates</label>
+                    <input type="date" value={data.rent_available_from || ''} onChange={e => set('rent_available_from', e.target.value)} className="input" />
+                  </div>
+                  <div>
+                    <label className="label">Saadaval kuni</label>
+                    <input type="date" value={data.rent_available_to || ''} onChange={e => set('rent_available_to', e.target.value)} className="input" />
+                  </div>
+                </div>
+              </div>
+            )}
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={data.negotiable} onChange={e => set('negotiable', e.target.checked)} className="rounded text-primary-600" />
               <span className="text-sm font-medium">Hind on kaubeldav</span>
