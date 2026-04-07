@@ -15,23 +15,23 @@ export default function Footer() {
         <div>
           <h3 className="font-semibold text-white mb-3">Kuulutused</h3>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/kuulutused?type=scooter" className="hover:text-white">Tõukerattad</Link></li>
-            <li><Link to="/kuulutused?type=cross" className="hover:text-white">Elektro-krossikad</Link></li>
-            <li><Link to="/lisa-kuulutus" className="hover:text-white">Lisa kuulutus</Link></li>
+            <li><Link to="/kuulutused?type=scooter" className="hover:text-black">Tõukerattad</Link></li>
+            <li><Link to="/kuulutused?type=cross" className="hover:text-black">Elektro-krossikad</Link></li>
+            <li><Link to="/lisa-kuulutus" className="hover:text-black">Lisa kuulutus</Link></li>
           </ul>
         </div>
         <div>
           <h3 className="font-semibold text-white mb-3">Info</h3>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/meist" className="hover:text-white">Meist</Link></li>
-            <li><Link to="/kkk" className="hover:text-white">KKK</Link></li>
+            <li><Link to="/meist" className="hover:text-black">Meist</Link></li>
+            <li><Link to="/kkk" className="hover:text-black">KKK</Link></li>
           </ul>
         </div>
         <div>
           <h3 className="font-semibold text-white mb-3">Õiguslik</h3>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/tingimused" className="hover:text-white">Kasutustingimused</Link></li>
-            <li><Link to="/privaatsus" className="hover:text-white">Privaatsuspoliitika</Link></li>
+            <li><Link to="/tingimused" className="hover:text-black">Kasutustingimused</Link></li>
+            <li><Link to="/privaatsus" className="hover:text-black">Privaatsuspoliitika</Link></li>
           </ul>
         </div>
       </div>
