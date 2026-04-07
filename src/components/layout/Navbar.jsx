@@ -24,7 +24,7 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center gap-6">
             <Link to="/kuulutused" className="text-gray-600 hover:text-primary-600 transition-colors text-sm font-medium">
-              Kuulutused
+              Müügi kuulutused
             </Link>
             <Link to="/meist" className="text-gray-600 hover:text-primary-600 transition-colors text-sm font-medium">
               Meist
