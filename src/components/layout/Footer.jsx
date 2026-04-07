@@ -13,13 +13,13 @@ export default function Footer() {
           <p className="text-sm text-gray-400">Eesti suurim kasutatud elektriliikurite turg.</p>
         </div>
         <div>
-          <h3 className="font-semibold text-white mb-3">Kuulutused</h3>
+          <h3 className="font-semibold text-white mb-3">Müügi kuulutused</h3>
           <ul className="space-y-2 text-sm">
             <li><Link to="/kuulutused?type=scooter" className="hover:text-black">Tõukerattad</Link></li>
             <li><Link to="/kuulutused?type=cross" className="hover:text-black">Elektri krossikad</Link></li>
             <li><Link to="/kuulutused?type=mopeed" className="hover:text-black">Elektri mopeedid</Link></li>
             <li><Link to="/kuulutused?type=jalgratas" className="hover:text-black">Elektri jalgrattad</Link></li>
-            <li><Link to="/lisa-kuulutus" className="hover:text-black">Lisa kuulutus</Link></li>
+            <li><Link to="/lisa-kuulutus" className="hover:text-black">Lisa müügi kuulutus</Link></li>
           </ul>
         </div>
         <div>
