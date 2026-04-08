@@ -8,22 +8,28 @@
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    @apply text-gray-900 bg-white;
+    font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+    background-color: #191923;
+    color: #dee2e6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #ffffff;
   }
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-dark-medium disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700 px-4 py-2;
+    @apply btn bg-primary-600 text-white hover:bg-primary-500 px-4 py-2 shadow-sm;
   }
 
   .btn-secondary {
-    @apply btn bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 px-4 py-2;
+    @apply btn bg-dark-light text-white border border-surface-border hover:bg-dark-lighter hover:border-muted px-4 py-2;
   }
 
   .btn-lg {
@@ -31,23 +37,52 @@
   }
 
   .input {
-    @apply w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply w-full rounded-lg border border-surface-border bg-dark-light px-3 py-2 text-sm text-white placeholder-muted focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors;
   }
 
   .label {
-    @apply block text-sm font-medium text-gray-700 mb-1;
+    @apply block text-xs font-semibold text-muted-light uppercase tracking-wide mb-1.5;
   }
 
   .card {
-    @apply bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow;
+    @apply bg-surface rounded-xl border border-surface-border overflow-hidden hover:border-muted transition-all duration-200 shadow-card hover:shadow-card-hover;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold text-white;
+  }
+
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 }
 
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #23232f;
+}
+::-webkit-scrollbar-thumb {
+  background: #333341;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #5b5b6f;
+}
+
+/* Select & option dark theme */
 select option {
-  color: #111827;
-  background-color: #ffffff;
+  color: #ffffff;
+  background-color: #23232f;
 }
 
 select {
-  color: #111827;
+  color: #ffffff;
+}
+
+/* Radio & checkbox accent */
+input[type="radio"], input[type="checkbox"] {
+  accent-color: #16a34a;
 }

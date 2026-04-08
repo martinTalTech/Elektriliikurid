@@ -6,16 +6,40 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Montserrat', 'system-ui', '-apple-system', 'sans-serif'],
+      },
       colors: {
         primary: {
           50: '#f0fdf4',
           100: '#dcfce7',
+          400: '#4ade80',
           500: '#22c55e',
           600: '#16a34a',
           700: '#15803d',
           800: '#166534',
           900: '#14532d',
+        },
+        dark: {
+          darkest: '#191923',
+          dark:    '#1e1e2a',
+          medium:  '#23232f',
+          light:   '#2c2c38',
+          lighter: '#333341',
+        },
+        surface: {
+          DEFAULT: '#23232f',
+          hover:   '#2c2c38',
+          border:  '#333341',
+        },
+        muted: {
+          DEFAULT: '#9898a8',
+          light:   '#bdbdc7',
         }
+      },
+      boxShadow: {
+        card: '0 2px 12px rgba(0,0,0,0.4)',
+        'card-hover': '0 6px 24px rgba(0,0,0,0.6)',
       }
     },
   },

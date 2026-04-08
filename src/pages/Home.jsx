@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Search, Zap, TrendingUp, ShieldCheck } from 'lucide-react'
+import { useNavigate, Link } from 'react-router-dom'
+import { Search, Zap, TrendingUp, ShieldCheck, ArrowRight } from 'lucide-react'
 import { useListings } from '../hooks/useListings'
 import ListingGrid from '../components/listings/ListingGrid'
 import { COUNTIES } from '../constants/counties'
@@ -22,60 +22,124 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-br from-primary-600 to-primary-800 text-white py-20">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Zap className="w-10 h-10 fill-white" />
-            <h1 className="text-4xl md:text-5xl font-extrabold">elektriliikur.ee</h1>
+      <section className="relative overflow-hidden bg-dark-medium">
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/20 via-transparent to-dark-darkest pointer-events-none" />
+        {/* Decorative circles */}
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-primary-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-primary-600/5 rounded-full blur-2xl pointer-events-none" />
+
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pt-16 pb-12 text-center">
+          <div className="inline-flex items-center gap-2 bg-primary-600/10 border border-primary-600/20 text-primary-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 uppercase tracking-widest">
+            <Zap className="w-3.5 h-3.5" />
+            Eesti nr. 1 elektriliikurite turg
           </div>
-          <p className="text-xl text-primary-100 mb-8">
-            Eesti suurim kasutatud elektriliikurite turg
+
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
+            Osta ja müü<br />
+            <span className="text-primary-500">elektriliikureid</span>
+          </h1>
+          <p className="text-lg text-muted-light mb-10 max-w-xl mx-auto">
+            Tõukerattad, elektri krossikad, mopeedid ja jalgratttad — kõik ühes kohas üle Eesti.
           </p>
-          <form onSubmit={handleSearch} className="bg-white rounded-2xl p-4 md:p-6 shadow-2xl text-left">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div>
-                <label className="label text-gray-700">Sõiduki tüüp</label>
-                <select value={search.type} onChange={e => setSearch(s => ({ ...s, type: e.target.value }))} className="input">
-                  <option value="">Kõik tüübid</option>
-                  <option value="scooter">🛴 Tõukeratas</option>
-                  <option value="cross">🏍️ Elektri krossikas</option>
-                  <option value="mopeed">🛵 Elektri mopeed</option>
-                  <option value="jalgratas">🚲 Elektri jalgratas</option>
-                </select>
+
+          {/* Search form */}
+          <div className="bg-dark-light border border-surface-border rounded-2xl p-4 md:p-5 shadow-card-hover text-left">
+            <form onSubmit={handleSearch}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="label">Sõiduki tüüp</label>
+                  <select
+                    value={search.type}
+                    onChange={e => setSearch(s => ({ ...s, type: e.target.value }))}
+                    className="input"
+                  >
+                    <option value="">Kõik tüübid</option>
+                    <option value="scooter">🛴 Tõukeratas</option>
+                    <option value="cross">🏍️ Elektri krossikas</option>
+                    <option value="mopeed">🛵 Elektri mopeed</option>
+                    <option value="jalgratas">🚲 Elektri jalgratas</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="label">Hind kuni (€)</label>
+                  <input
+                    type="number"
+                    placeholder="nt. 1500"
+                    value={search.price_to}
+                    onChange={e => setSearch(s => ({ ...s, price_to: e.target.value }))}
+                    className="input"
+                  />
+                </div>
+                <div>
+                  <label className="label">Asukoht</label>
+                  <select
+                    value={search.county}
+                    onChange={e => setSearch(s => ({ ...s, county: e.target.value }))}
+                    className="input"
+                  >
+                    <option value="">Kõik maakonnad</option>
+                    {COUNTIES.map(c => <option key={c} value={c}>{c} maakond</option>)}
+                  </select>
+                </div>
               </div>
-              <div>
-                <label className="label text-gray-700">Hind kuni (€)</label>
-                <input type="number" placeholder="nt. 1500" value={search.price_to} onChange={e => setSearch(s => ({ ...s, price_to: e.target.value }))} className="input" />
-              </div>
-              <div>
-                <label className="label text-gray-700">Asukoht</label>
-                <select value={search.county} onChange={e => setSearch(s => ({ ...s, county: e.target.value }))} className="input">
-                  <option value="">Kõik maakonnad</option>
-                  {COUNTIES.map(c => <option key={c} value={c}>{c} maakond</option>)}
-                </select>
-              </div>
-            </div>
-            <button type="submit" className="btn btn-primary btn-lg w-full mt-4 text-base">
-              <Search className="w-5 h-5 mr-2" /> Detailsem otsing
-            </button>
-          </form>
+              <button type="submit" className="btn btn-primary btn-lg w-full mt-3 text-base font-bold gap-2">
+                <Search className="w-5 h-5" /> Otsi kuulutusi
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* Category quick links */}
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pb-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { emoji: '🛴', label: 'Tõukerattad', value: 'scooter' },
+              { emoji: '🏍️', label: 'Krossikad', value: 'cross' },
+              { emoji: '🛵', label: 'Mopeedid', value: 'mopeed' },
+              { emoji: '🚲', label: 'Jalgrattad', value: 'jalgratas' },
+            ].map(cat => (
+              <Link
+                key={cat.value}
+                to={`/kuulutused?type=${cat.value}`}
+                className="flex items-center gap-3 bg-dark-darkest border border-surface-border rounded-xl px-4 py-3 hover:border-primary-600/50 hover:bg-dark-light transition-all group"
+              >
+                <span className="text-2xl">{cat.emoji}</span>
+                <span className="text-sm font-semibold text-white group-hover:text-primary-400 transition-colors">{cat.label}</span>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Feature cards */}
+      <section className="border-b border-surface-border bg-dark-darkest">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { icon: <Zap className="w-8 h-8 text-primary-600" />, title: 'Ainult elektriliikurid', desc: 'Fokuseeritud platvorm — leia täpselt see, mida otsid' },
-              { icon: <ShieldCheck className="w-8 h-8 text-primary-600" />, title: 'Turvaline tehing', desc: 'Registreeritud kasutajad, läbipaistev ajalugu' },
-              { icon: <TrendingUp className="w-8 h-8 text-primary-600" />, title: 'Kasvav kogukond', desc: 'Kuulutused üle Eesti' },
+              {
+                icon: <Zap className="w-6 h-6 text-primary-500" />,
+                title: 'Ainult elektriliikurid',
+                desc: 'Fokuseeritud platvorm — leia täpselt see, mida otsid, ilma mürata.',
+              },
+              {
+                icon: <ShieldCheck className="w-6 h-6 text-primary-500" />,
+                title: 'Turvaline tehing',
+                desc: 'Registreeritud kasutajad ja läbipaistev kuulutuste ajalugu.',
+              },
+              {
+                icon: <TrendingUp className="w-6 h-6 text-primary-500" />,
+                title: 'Kasvav kogukond',
+                desc: 'Kuulutused üle kogu Eesti — müüjad ja ostjad samas kohas.',
+              },
             ].map(f => (
-              <div key={f.title} className="bg-white rounded-xl p-6 flex gap-4 items-start border border-gray-100">
-                {f.icon}
+              <div key={f.title} className="flex gap-4 items-start bg-dark-medium border border-surface-border rounded-xl p-5 hover:border-primary-600/30 transition-colors">
+                <div className="bg-primary-600/10 rounded-lg p-2.5 flex-shrink-0">
+                  {f.icon}
+                </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">{f.title}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{f.desc}</p>
+                  <h3 className="font-bold text-white text-sm mb-1">{f.title}</h3>
+                  <p className="text-xs text-muted leading-relaxed">{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -84,14 +148,35 @@ export default function Home() {
       </section>
 
       {/* Latest listings */}
-      <section className="max-w-7xl mx-auto px-4 py-12">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Viimati lisatud</h2>
-          <a href="#/kuulutused" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-            Vaata kõiki →
-          </a>
+          <div>
+            <h2 className="section-title">Viimati lisatud</h2>
+            <p className="text-sm text-muted mt-1">Värskeimad kuulutused platvormil</p>
+          </div>
+          <Link
+            to="/kuulutused"
+            className="flex items-center gap-1.5 text-sm font-semibold text-primary-500 hover:text-primary-400 transition-colors"
+          >
+            Vaata kõiki <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
         <ListingGrid listings={listings} loading={loading} />
+      </section>
+
+      {/* CTA */}
+      <section className="bg-dark-medium border-t border-surface-border">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-14 text-center">
+          <h2 className="text-3xl font-black text-white mb-3">
+            Soovid oma elektriliikuri <span className="text-primary-500">müüa?</span>
+          </h2>
+          <p className="text-muted-light mb-8 max-w-md mx-auto">
+            Lisa kuulutus tasuta ja jõua tuhande huvitatud ostjani üle Eesti.
+          </p>
+          <Link to="/lisa-kuulutus" className="btn btn-primary btn-lg gap-2 text-base font-bold">
+            <Zap className="w-5 h-5" /> Lisa kuulutus tasuta
+          </Link>
+        </div>
       </section>
     </div>
   )

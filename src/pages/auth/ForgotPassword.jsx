@@ -16,28 +16,44 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Unustasin parooli</h1>
-        <div className="card p-8">
+        <h1 className="text-2xl font-black text-white text-center mb-6">Unustasin parooli</h1>
+
+        <div className="bg-dark-medium border border-surface-border rounded-2xl p-7">
           {sent ? (
-            <div className="text-center">
-              <div className="text-4xl mb-3">✉️</div>
-              <p className="text-gray-700">Saatsime paroolilinkiga emaili aadressile <strong>{email}</strong></p>
+            <div className="text-center py-4">
+              <div className="text-4xl mb-4">✉️</div>
+              <p className="text-muted-light">Saatsime paroolilinkiga emaili aadressile{' '}
+                <strong className="text-white">{email}</strong>
+              </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
+              <p className="text-sm text-muted mb-2">
+                Sisesta oma emaili aadress ja saadame sulle parooli taastamislingi.
+              </p>
               <div>
                 <label className="label">Email</label>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="input" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  className="input"
+                  placeholder="sinu@email.ee"
+                />
               </div>
-              <button type="submit" disabled={loading} className="btn btn-primary btn-lg w-full">
+              <button type="submit" disabled={loading} className="btn btn-primary btn-lg w-full font-bold">
                 {loading ? 'Saatmine...' : 'Saada taastamislink'}
               </button>
             </form>
           )}
-          <p className="text-center text-sm text-gray-500 mt-4">
-            <Link to="/logi-sisse" className="text-primary-600 hover:text-primary-700">← Tagasi sisselogimisele</Link>
+
+          <p className="text-center text-sm text-muted mt-5">
+            <Link to="/logi-sisse" className="text-primary-500 hover:text-primary-400 transition-colors">
+              ← Tagasi sisselogimisele
+            </Link>
           </p>
         </div>
       </div>
