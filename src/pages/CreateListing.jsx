@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Check, ChevronRight, ChevronLeft, Upload, X } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
-import { SCOOTER_BRANDS, CROSS_BRANDS, MOPED_BRANDS, EBIKE_BRANDS, CONDITIONS } from '../constants/brands'
+import { BRANDS_BY_TYPE, VEHICLE_TYPES, CONDITIONS } from '../constants/brands'
 import { COUNTIES } from '../constants/counties'
 import { getStripe } from '../lib/stripe'
 
@@ -39,11 +39,7 @@ export default function CreateListing() {
   )
 
   const set = (key, val) => setData(d => ({ ...d, [key]: val }))
-  const brands =
-    data.vehicle_type === 'cross' ? CROSS_BRANDS :
-      data.vehicle_type === 'mopeed' ? MOPED_BRANDS :
-        data.vehicle_type === 'jalgratas' ? EBIKE_BRANDS :
-          SCOOTER_BRANDS
+  const brands = BRANDS_BY_TYPE[data.vehicle_type] || BRANDS_BY_TYPE.scooter
 
   const autoTitle = () => {
     if (data.brand && data.model && data.year) {
@@ -176,25 +172,20 @@ export default function CreateListing() {
             {/* Vehicle type */}
             <div>
               <label className="label">Sõiduki tüüp *</label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
-                  { v: 'scooter',   icon: '🛴', label: 'Tõukeratas' },
-                  { v: 'cross',     icon: '🏍️', label: 'Krossikas' },
-                  { v: 'mopeed',    icon: '🛵', label: 'Mopeed' },
-                  { v: 'jalgratas', icon: '🚲', label: 'Jalgratas' }
-                ].map(t => (
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                {VEHICLE_TYPES.map(t => (
                   <button
-                    key={t.v}
+                    key={t.value}
                     type="button"
-                    onClick={() => set('vehicle_type', t.v)}
-                    className={`p-4 rounded-xl border-2 text-center transition-all ${
-                      data.vehicle_type === t.v
+                    onClick={() => set('vehicle_type', t.value)}
+                    className={`py-3 px-1 rounded-xl border-2 text-center transition-all ${
+                      data.vehicle_type === t.value
                         ? 'border-primary-500 bg-primary-600/10 text-primary-400'
                         : 'border-surface-border hover:border-muted text-muted-light'
                     }`}
                   >
-                    <div className="text-2xl mb-1.5">{t.icon}</div>
-                    <div className="font-bold text-sm">{t.label}</div>
+                    <div className="text-2xl mb-1">{t.icon}</div>
+                    <div className="font-bold text-xs leading-tight">{t.label.split(' ').pop()}</div>
                   </button>
                 ))}
               </div>

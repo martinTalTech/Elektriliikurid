@@ -26,17 +26,39 @@ export const EBIKE_BRANDS = [
   'Lankeleisi', 'Muu'
 ]
 
+export const RULA_BRANDS = [
+  'Evolve', 'Boosted', 'WowGo', 'Meepo', 'Backfire',
+  'Lacroix', 'Exway', 'Hoyt St', 'Ownboard', 'Teamgee',
+  'Vestar', 'Acton', 'Koowheel', 'Muu'
+]
+
+export const MONO_BRANDS = [
+  'Inmotion', 'Begode', 'KingSong', 'Gotway', 'Leaperkim',
+  'Ninebot One', 'Segway', 'Solowheel', 'Muu'
+]
+
 export const CONDITIONS = [
-  { value: 'new', label: 'Uus', description: 'Kasutamata, originaalpakendis' },
-  { value: 'like_new', label: 'Nagu uus', description: 'Väga vähe kasutatud' },
-  { value: 'good', label: 'Hea', description: 'Esineb väiksemaid kulumise jälgi, täielikult töökorras' },
-  { value: 'fair', label: 'Rahuldav', description: 'Nähtavad kasutamisjäljed, töökorras' },
-  { value: 'poor', label: 'Halb', description: 'Vajab remonti' },
+  { value: 'new',      label: 'Uus',        description: 'Kasutamata, originaalpakendis' },
+  { value: 'like_new', label: 'Nagu uus',   description: 'Väga vähe kasutatud' },
+  { value: 'good',     label: 'Hea',        description: 'Esineb väiksemaid kulumise jälgi, täielikult töökorras' },
+  { value: 'fair',     label: 'Rahuldav',   description: 'Nähtavad kasutamisjäljed, töökorras' },
+  { value: 'poor',     label: 'Halb',       description: 'Vajab remonti' },
 ]
 
 export const VEHICLE_TYPES = [
-  { value: 'scooter', label: 'Tõukeratas', icon: '🛴' },
-  { value: 'cross', label: 'Elektri krossikas', icon: '🏍️' },
-  { value: 'mopeed', label: 'Elektri mopeed', icon: '🛵' },
-  { value: 'jalgratas', label: 'Elektri jalgratas', icon: '🚲' },
+  { value: 'scooter',   label: 'Tõukeratas',        icon: '🛴', gradient: 'from-green-900/40 to-green-800/20' },
+  { value: 'cross',     label: 'Elektri krossikas', icon: '🏍️', gradient: 'from-orange-900/40 to-orange-800/20' },
+  { value: 'mopeed',    label: 'Elektri mopeed',    icon: '🛵', gradient: 'from-blue-900/40 to-blue-800/20' },
+  { value: 'jalgratas', label: 'Elektri jalgratas',  icon: '🚲', gradient: 'from-teal-900/40 to-teal-800/20' },
+  { value: 'rula',      label: 'Elektri rula',       icon: '🛹', gradient: 'from-purple-900/40 to-purple-800/20' },
+  { value: 'monoratas', label: 'Monoratas',           icon: '🔵', gradient: 'from-yellow-900/40 to-yellow-800/20' },
 ]
+
+export const BRANDS_BY_TYPE = {
+  scooter:   SCOOTER_BRANDS,
+  cross:     CROSS_BRANDS,
+  mopeed:    MOPED_BRANDS,
+  jalgratas: EBIKE_BRANDS,
+  rula:      RULA_BRANDS,
+  monoratas: MONO_BRANDS,
+}

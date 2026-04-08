@@ -8,8 +8,9 @@ import Filters from '../components/listings/Filters'
 export default function Listings() {
   const [searchParams] = useSearchParams()
   const [showFilters, setShowFilters] = useState(false)
+  const initTypes = searchParams.getAll('type').filter(Boolean)
   const [filters, setFilters] = useState({
-    vehicle_type:  searchParams.get('type')         || undefined,
+    vehicle_types: initTypes.length ? initTypes : undefined,
     listing_type:  searchParams.get('listing_type') || undefined,
     sort: 'newest',
     page: 0,

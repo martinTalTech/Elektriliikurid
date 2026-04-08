@@ -7,10 +7,10 @@ export default function Filters({ filters, onChange }) {
   const [open, setOpen] = useState({ listing_type: true, type: true, price: true })
 
   const brands =
-    filters.vehicle_type === 'cross'     ? CROSS_BRANDS :
-    filters.vehicle_type === 'mopeed'    ? MOPED_BRANDS :
-    filters.vehicle_type === 'jalgratas' ? EBIKE_BRANDS :
-    SCOOTER_BRANDS
+    filters.vehicle_type === 'cross' ? CROSS_BRANDS :
+      filters.vehicle_type === 'mopeed' ? MOPED_BRANDS :
+        filters.vehicle_type === 'jalgratas' ? EBIKE_BRANDS :
+          SCOOTER_BRANDS
 
   const toggle = (key) => setOpen(prev => ({ ...prev, [key]: !prev[key] }))
   const set = (key, val) => onChange({ ...filters, [key]: val, page: 0 })
@@ -37,11 +37,11 @@ export default function Filters({ filters, onChange }) {
       <FilterSection title="Kuulutuse liik" open={open.listing_type} toggle={() => toggle('listing_type')}>
         <div className="space-y-2 pt-1">
           {[
-            { value: '',        label: 'Kõik',        color: 'text-muted-light' },
-            { value: 'sale',    label: '💰 Müük',     color: 'text-green-400' },
-            { value: 'rent',    label: '🔑 Rent',     color: 'text-blue-400' },
-            { value: 'auction', label: '🔨 Oksjon',   color: 'text-orange-400' },
-            { value: 'wanted',  label: '🔍 Otsitakse', color: 'text-purple-400' },
+            { value: '', label: 'Kõik', color: 'text-muted-light' },
+            { value: 'sale', label: 'Müük', color: 'text-green-400' },
+            { value: 'rent', label: 'Rent', color: 'text-blue-400' },
+            { value: 'auction', label: 'Oksjon', color: 'text-orange-400' },
+            { value: 'wanted', label: 'Otsitakse', color: 'text-purple-400' },
           ].map(opt => (
             <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
               <input
