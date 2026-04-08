@@ -31,7 +31,8 @@ export function useListings(filters = {}) {
       else if (filters.county) query = query.eq('county', filters.county)
       if (filters.condition?.length) query = query.in('condition', filters.condition)
       if (filters.mileage_to) query = query.lte('mileage_km', filters.mileage_to)
-      if (filters.listing_type) query = query.eq('listing_type', filters.listing_type)
+      if (filters.listing_types?.length) query = query.in('listing_type', filters.listing_types)
+      else if (filters.listing_type) query = query.eq('listing_type', filters.listing_type)
 
       const sortMap = {
         newest: { column: 'created_at', ascending: false },

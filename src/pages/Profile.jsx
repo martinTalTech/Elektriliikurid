@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { supabase } from '../lib/supabase'
 import { formatPrice, formatDate } from '../utils/format'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, ClipboardList } from 'lucide-react'
+import VehicleIcon from '../components/VehicleIcon'
 
 export default function Profile() {
   const { user } = useAuth()
@@ -79,9 +80,11 @@ export default function Profile() {
           {[1,2,3].map(i => <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />)}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
-          <div className="text-4xl mb-3">📋</div>
-          <p>Kuulutusi ei leitud</p>
+        <div className="text-center py-12">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-dark-light border border-surface-border mb-4">
+            <ClipboardList className="w-7 h-7 text-muted" />
+          </div>
+          <p className="text-muted">Kuulutusi ei leitud</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -90,7 +93,7 @@ export default function Profile() {
             return (
               <div key={l.id} className="card flex items-center gap-4 p-4">
                 <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                  {img ? <img src={img} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-2xl">{l.vehicle_type === 'scooter' ? '🛴' : '🏍️'}</div>}
+                  {img ? <img src={img} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-muted"><VehicleIcon type={l.vehicle_type || 'scooter'} className="w-8 h-8" /></div>}
                 </div>
                 <div className="flex-1 min-w-0">
                   <Link to={`/kuulutused/${l.id}`} className="font-medium text-gray-900 hover:text-primary-600 truncate block">{l.title}</Link>

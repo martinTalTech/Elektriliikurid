@@ -1,16 +1,16 @@
 import { useState } from 'react'
 import { ChevronDown, X } from 'lucide-react'
-import { SCOOTER_BRANDS, CROSS_BRANDS, MOPED_BRANDS, EBIKE_BRANDS, CONDITIONS } from '../../constants/brands'
+import { SCOOTER_BRANDS, CROSS_BRANDS, MOPED_BRANDS, EBIKE_BRANDS, RULA_BRANDS, MONO_BRANDS, CONDITIONS } from '../../constants/brands'
 import { COUNTIES } from '../../constants/counties'
 
 export default function Filters({ filters, onChange }) {
   const [open, setOpen] = useState({ listing_type: true, type: true, price: true })
 
-  const brands =
-    filters.vehicle_type === 'cross' ? CROSS_BRANDS :
-      filters.vehicle_type === 'mopeed' ? MOPED_BRANDS :
-        filters.vehicle_type === 'jalgratas' ? EBIKE_BRANDS :
-          SCOOTER_BRANDS
+  const brandMap = { scooter: SCOOTER_BRANDS, cross: CROSS_BRANDS, mopeed: MOPED_BRANDS, jalgratas: EBIKE_BRANDS, rula: RULA_BRANDS, monoratas: MONO_BRANDS }
+  const selectedTypes = filters.vehicle_types || []
+  const brands = selectedTypes.length === 1
+    ? brandMap[selectedTypes[0]] || SCOOTER_BRANDS
+    : [...new Set(Object.values(brandMap).flat())].sort()
 
   const toggle = (key) => setOpen(prev => ({ ...prev, [key]: !prev[key] }))
   const set = (key, val) => onChange({ ...filters, [key]: val, page: 0 })
@@ -37,23 +37,27 @@ export default function Filters({ filters, onChange }) {
       <FilterSection title="Kuulutuse liik" open={open.listing_type} toggle={() => toggle('listing_type')}>
         <div className="space-y-2 pt-1">
           {[
-            { value: '', label: 'Kõik', color: 'text-muted-light' },
-            { value: 'sale', label: 'Müük', color: 'text-green-400' },
-            { value: 'rent', label: 'Rent', color: 'text-blue-400' },
-            { value: 'auction', label: 'Oksjon', color: 'text-orange-400' },
-            { value: 'wanted', label: 'Otsitakse', color: 'text-purple-400' },
-          ].map(opt => (
-            <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
-              <input
-                type="radio"
-                name="listing_type"
-                value={opt.value}
-                checked={(filters.listing_type || '') === opt.value}
-                onChange={() => set('listing_type', opt.value || undefined)}
-              />
-              <span className={`text-sm group-hover:text-white transition-colors ${opt.color}`}>{opt.label}</span>
-            </label>
-          ))}
+            { value: 'sale', label: 'Müük' },
+            { value: 'rent', label: 'Rent' },
+            { value: 'auction', label: 'Oksjon' },
+            { value: 'wanted', label: 'Otsitakse' },
+          ].map(opt => {
+            const selected = (filters.listing_types || []).includes(opt.value)
+            return (
+              <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={selected}
+                  onChange={() => {
+                    const cur = filters.listing_types || []
+                    const next = selected ? cur.filter(v => v !== opt.value) : [...cur, opt.value]
+                    set('listing_types', next.length ? next : undefined)
+                  }}
+                />
+                <span className="text-sm text-muted-light group-hover:text-white transition-colors">{opt.label}</span>
+              </label>
+            )
+          })}
         </div>
       </FilterSection>
 
@@ -61,23 +65,29 @@ export default function Filters({ filters, onChange }) {
       <FilterSection title="Sõiduki tüüp" open={open.type} toggle={() => toggle('type')}>
         <div className="space-y-2 pt-1">
           {[
-            { value: '', label: 'Kõik' },
-            { value: 'scooter', label: '🛴 Tõukeratas' },
-            { value: 'cross', label: '🏍️ Elektri krossikas' },
-            { value: 'mopeed', label: '🛵 Elektri mopeed' },
-            { value: 'jalgratas', label: '🚲 Elektri jalgratas' }
-          ].map(opt => (
-            <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
-              <input
-                type="radio"
-                name="vehicle_type"
-                value={opt.value}
-                checked={(filters.vehicle_type || '') === opt.value}
-                onChange={() => set('vehicle_type', opt.value || undefined)}
-              />
-              <span className="text-sm text-muted-light group-hover:text-white transition-colors">{opt.label}</span>
-            </label>
-          ))}
+            { value: 'scooter', label: 'Elektri tõukeratas' },
+            { value: 'cross', label: 'Elektri krossikas' },
+            { value: 'mopeed', label: 'Elektri mopeed' },
+            { value: 'jalgratas', label: 'Elektri jalgratas' },
+            { value: 'rula', label: 'Elektri rula' },
+            { value: 'monoratas', label: 'Monoratas' },
+          ].map(opt => {
+            const selected = (filters.vehicle_types || []).includes(opt.value)
+            return (
+              <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={selected}
+                  onChange={() => {
+                    const cur = filters.vehicle_types || []
+                    const next = selected ? cur.filter(v => v !== opt.value) : [...cur, opt.value]
+                    set('vehicle_types', next.length ? next : undefined)
+                  }}
+                />
+                <span className="text-sm text-muted-light group-hover:text-white transition-colors">{opt.label}</span>
+              </label>
+            )
+          })}
         </div>
       </FilterSection>
 

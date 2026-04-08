@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { MapPin, Calendar, Gauge, Zap, ArrowLeft, Share2, Heart, Eye, Phone, Mail } from 'lucide-react'
+import { MapPin, Calendar, Gauge, Zap, ArrowLeft, Share2, Heart, Eye, Phone, Mail, Search } from 'lucide-react'
+import VehicleIcon from '../components/VehicleIcon'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { formatPrice, formatDate, getConditionLabel } from '../utils/format'
@@ -43,7 +44,9 @@ export default function ListingDetail() {
 
   if (!listing) return (
     <div className="max-w-5xl mx-auto px-4 py-16 text-center">
-      <div className="text-6xl mb-4">😕</div>
+      <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-dark-light border border-surface-border mb-5">
+        <Search className="w-8 h-8 text-muted" />
+      </div>
       <h2 className="text-xl font-bold text-white">Kuulutust ei leitud</h2>
       <Link to="/kuulutused" className="btn btn-primary mt-6 inline-flex">
         Tagasi kuulutustele
@@ -80,10 +83,8 @@ export default function ListingDetail() {
               {images[activeImg] ? (
                 <img src={images[activeImg].url} alt={listing.title} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-6xl opacity-30">
-                  {listing.vehicle_type === 'scooter' ? '🛴' :
-                   listing.vehicle_type === 'cross'   ? '🏍️' :
-                   listing.vehicle_type === 'mopeed'  ? '🛵' : '🚲'}
+                <div className="w-full h-full flex items-center justify-center text-muted/30">
+                  <VehicleIcon type={listing.vehicle_type || 'scooter'} className="w-20 h-20" />
                 </div>
               )}
             </div>

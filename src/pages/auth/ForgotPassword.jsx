@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Mail } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 
 export default function ForgotPassword() {
@@ -23,7 +24,9 @@ export default function ForgotPassword() {
         <div className="bg-dark-medium border border-surface-border rounded-2xl p-7">
           {sent ? (
             <div className="text-center py-4">
-              <div className="text-4xl mb-4">✉️</div>
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-600/10 border border-primary-600/20 mb-4">
+                <Mail className="w-7 h-7 text-primary-500" />
+              </div>
               <p className="text-muted-light">Saatsime paroolilinkiga emaili aadressile{' '}
                 <strong className="text-white">{email}</strong>
               </p>

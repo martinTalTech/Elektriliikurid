@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Check, ChevronRight, ChevronLeft, Upload, X } from 'lucide-react'
+import { Check, ChevronRight, ChevronLeft, Upload, X, Banknote, Key, Gavel, Search } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import VehicleIcon from '../components/VehicleIcon'
 import { useAuth } from '../hooks/useAuth'
 import { BRANDS_BY_TYPE, VEHICLE_TYPES, CONDITIONS } from '../constants/brands'
 import { COUNTIES } from '../constants/counties'
@@ -25,10 +26,10 @@ export default function CreateListing() {
   })
 
   const LISTING_TYPES = [
-    { v: 'sale',    icon: '💰', label: 'Müük',      desc: 'Müün oma sõidukit' },
-    { v: 'rent',    icon: '🔑', label: 'Rent',      desc: 'Annan rentimiseks' },
-    { v: 'auction', icon: '🔨', label: 'Oksjon',    desc: 'Enampakkumine' },
-    { v: 'wanted',  icon: '🔍', label: 'Otsitakse', desc: 'Otsin sõidukit' },
+    { v: 'sale',    icon: <Banknote className="w-5 h-5" />, label: 'Müük',      desc: 'Müün oma sõidukit' },
+    { v: 'rent',    icon: <Key className="w-5 h-5" />,      label: 'Rent',      desc: 'Annan rentimiseks' },
+    { v: 'auction', icon: <Gavel className="w-5 h-5" />,    label: 'Oksjon',    desc: 'Enampakkumine' },
+    { v: 'wanted',  icon: <Search className="w-5 h-5" />,   label: 'Otsitakse', desc: 'Otsin sõidukit' },
   ]
 
   if (!user) return (
@@ -161,7 +162,7 @@ export default function CreateListing() {
                         : 'border-surface-border hover:border-muted text-muted-light'
                     }`}
                   >
-                    <div className="text-2xl mb-1.5">{t.icon}</div>
+                    <div className="flex justify-center mb-1.5">{t.icon}</div>
                     <div className="font-bold text-sm">{t.label}</div>
                     <div className="text-xs mt-0.5 opacity-70">{t.desc}</div>
                   </button>
@@ -184,7 +185,7 @@ export default function CreateListing() {
                         : 'border-surface-border hover:border-muted text-muted-light'
                     }`}
                   >
-                    <div className="text-2xl mb-1">{t.icon}</div>
+                    <div className="flex justify-center mb-1"><VehicleIcon type={t.value} className="w-7 h-7" /></div>
                     <div className="font-bold text-xs leading-tight">{t.label.split(' ').pop()}</div>
                   </button>
                 ))}
