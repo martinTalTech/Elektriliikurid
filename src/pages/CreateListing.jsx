@@ -24,9 +24,16 @@ export default function CreateListing() {
     plan: 'standard'
   })
 
+  const LISTING_TYPES = [
+    { v: 'sale',    icon: '💰', label: 'Müük',      desc: 'Müün oma sõidukit' },
+    { v: 'rent',    icon: '🔑', label: 'Rent',      desc: 'Annan rentimiseks' },
+    { v: 'auction', icon: '🔨', label: 'Oksjon',    desc: 'Enampakkumine' },
+    { v: 'wanted',  icon: '🔍', label: 'Otsitakse', desc: 'Otsin sõidukit' },
+  ]
+
   if (!user) return (
     <div className="max-w-lg mx-auto px-4 py-16 text-center">
-      <h2 className="text-xl font-semibold mb-2">Logi sisse kuulutuse lisamiseks</h2>
+      <h2 className="text-xl font-bold text-white mb-2">Logi sisse kuulutuse lisamiseks</h2>
       <a href="#/logi-sisse" className="btn btn-primary mt-4 inline-flex">Logi sisse</a>
     </div>
   )
@@ -82,6 +89,7 @@ export default function CreateListing() {
         rent_min_days: data.rent_min_days ? parseInt(data.rent_min_days) : null,
         rent_available_from: data.rent_available_from || null,
         rent_available_to: data.rent_available_to || null,
+        auction_ends_at: data.auction_ends_at || null,
       }).select().single()
 
       if (error) throw error
@@ -117,63 +125,76 @@ export default function CreateListing() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Lisa kuulutus</h1>
+      <h1 className="text-2xl font-black text-white mb-6">Lisa kuulutus</h1>
 
       {/* Stepper */}
       <div className="flex items-center mb-8 overflow-x-auto pb-2">
         {STEPS.map((s, i) => (
           <div key={s} className="flex items-center flex-shrink-0">
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${i < step ? 'bg-primary-600 text-white' :
-              i === step ? 'bg-primary-100 text-primary-700 border-2 border-primary-500' :
-                'bg-gray-100 text-gray-400'
-              }`}>
+            <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+              i < step  ? 'bg-primary-600 text-white' :
+              i === step ? 'bg-primary-600/20 text-primary-400 border-2 border-primary-500' :
+                          'bg-dark-light text-muted border-2 border-surface-border'
+            }`}>
               {i < step ? <Check className="w-4 h-4" /> : i + 1}
             </div>
-            <span className={`ml-2 text-sm hidden sm:block ${i === step ? 'font-medium text-primary-700' : 'text-gray-500'}`}>{s}</span>
-            {i < STEPS.length - 1 && <div className="w-8 h-0.5 bg-gray-200 mx-2 flex-shrink-0" />}
+            <span className={`ml-2 text-sm hidden sm:block ${i === step ? 'font-semibold text-primary-400' : 'text-muted'}`}>{s}</span>
+            {i < STEPS.length - 1 && <div className="w-8 h-0.5 bg-surface-border mx-2 flex-shrink-0" />}
           </div>
         ))}
       </div>
 
-      <div className="card p-6">
+      <div className="bg-dark-medium border border-surface-border rounded-xl p-6">
         {/* Step 0: Vehicle data */}
         {step === 0 && (
-          <div className="space-y-4">
-            <h2 className="font-semibold text-lg mb-4">Sõiduki andmed</h2>
+          <div className="space-y-5">
+            <h2 className="font-bold text-lg text-white">Sõiduki andmed</h2>
+
+            {/* Listing type */}
             <div>
-              <div>
-                <label className="label">Kuulutuse tüüp *</label>
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  {[
-                    { v: 'sale', icon: '💰', label: 'Müük' },
-                    { v: 'rent', icon: '🔑', label: 'Rent' }
-                  ].map(t => (
-                    <button
-                      key={t.v}
-                      onClick={() => set('listing_type', t.v)}
-                      className={`p-4 rounded-xl border-2 text-center transition-colors ${data.listing_type === t.v ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-gray-200 hover:border-gray-300'}`}
-                    >
-                      <div className="text-3xl mb-1">{t.icon}</div>
-                      <div className="font-medium text-sm">{t.label}</div>
-                    </button>
-                  ))}
-                </div>
+              <label className="label">Kuulutuse tüüp *</label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-1">
+                {LISTING_TYPES.map(t => (
+                  <button
+                    key={t.v}
+                    type="button"
+                    onClick={() => set('listing_type', t.v)}
+                    className={`p-4 rounded-xl border-2 text-center transition-all ${
+                      data.listing_type === t.v
+                        ? 'border-primary-500 bg-primary-600/10 text-primary-400'
+                        : 'border-surface-border hover:border-muted text-muted-light'
+                    }`}
+                  >
+                    <div className="text-2xl mb-1.5">{t.icon}</div>
+                    <div className="font-bold text-sm">{t.label}</div>
+                    <div className="text-xs mt-0.5 opacity-70">{t.desc}</div>
+                  </button>
+                ))}
               </div>
+            </div>
+
+            {/* Vehicle type */}
+            <div>
               <label className="label">Sõiduki tüüp *</label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                  { v: 'scooter', icon: '🛴', label: 'Tõukeratas' },
-                  { v: 'cross', icon: '🏍️', label: 'Elektri krossikas' },
-                  { v: 'mopeed', icon: '🛵', label: 'Elektri mopeed' },
-                  { v: 'jalgratas', icon: '🚲', label: 'Elektri jalgratas' }
+                  { v: 'scooter',   icon: '🛴', label: 'Tõukeratas' },
+                  { v: 'cross',     icon: '🏍️', label: 'Krossikas' },
+                  { v: 'mopeed',    icon: '🛵', label: 'Mopeed' },
+                  { v: 'jalgratas', icon: '🚲', label: 'Jalgratas' }
                 ].map(t => (
                   <button
                     key={t.v}
+                    type="button"
                     onClick={() => set('vehicle_type', t.v)}
-                    className={`p-4 rounded-xl border-2 text-center transition-colors ${data.vehicle_type === t.v ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-gray-200 hover:border-gray-300'}`}
+                    className={`p-4 rounded-xl border-2 text-center transition-all ${
+                      data.vehicle_type === t.v
+                        ? 'border-primary-500 bg-primary-600/10 text-primary-400'
+                        : 'border-surface-border hover:border-muted text-muted-light'
+                    }`}
                   >
-                    <div className="text-3xl mb-1">{t.icon}</div>
-                    <div className="font-medium text-sm">{t.label}</div>
+                    <div className="text-2xl mb-1.5">{t.icon}</div>
+                    <div className="font-bold text-sm">{t.label}</div>
                   </button>
                 ))}
               </div>
@@ -205,14 +226,14 @@ export default function CreateListing() {
         {/* Step 1: Technical */}
         {step === 1 && (
           <div className="space-y-4">
-            <h2 className="font-semibold text-lg mb-4">Tehniline info</h2>
+            <h2 className="font-bold text-lg text-white">Tehniline info</h2>
             {[
-              { key: 'motor_power_w', label: 'Mootori võimsus (W)', placeholder: 'nt. 500' },
-              { key: 'battery_capacity_wh', label: 'Aku mahtuvus (Wh)', placeholder: 'nt. 365' },
-              { key: 'max_speed_kmh', label: 'Maksimaalne kiirus (km/h)', placeholder: 'nt. 25' },
-              { key: 'range_km', label: 'Sõiduulatus (km)', placeholder: 'nt. 40' },
-              { key: 'mileage_km', label: 'Läbisõit (km)', placeholder: 'nt. 500' },
-              { key: 'charge_cycles', label: 'Laadimistsükleid (valikuline)', placeholder: 'nt. 150' },
+              { key: 'motor_power_w',       label: 'Mootori võimsus (W)',      placeholder: 'nt. 500' },
+              { key: 'battery_capacity_wh', label: 'Aku mahtuvus (Wh)',        placeholder: 'nt. 365' },
+              { key: 'max_speed_kmh',       label: 'Maksimaalne kiirus (km/h)', placeholder: 'nt. 25' },
+              { key: 'range_km',            label: 'Sõiduulatus (km)',          placeholder: 'nt. 40' },
+              { key: 'mileage_km',          label: 'Läbisõit (km)',             placeholder: 'nt. 500' },
+              { key: 'charge_cycles',       label: 'Laadimistsükleid (valikuline)', placeholder: 'nt. 150' },
             ].map(f => (
               <div key={f.key}>
                 <label className="label">{f.label}</label>
@@ -223,11 +244,15 @@ export default function CreateListing() {
               <label className="label">Seisund *</label>
               <div className="space-y-2">
                 {CONDITIONS.map(c => (
-                  <label key={c.value} className={`flex items-start gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${data.condition === c.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}>
+                  <label key={c.value} className={`flex items-start gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                    data.condition === c.value
+                      ? 'border-primary-500 bg-primary-600/10'
+                      : 'border-surface-border hover:border-muted'
+                  }`}>
                     <input type="radio" name="condition" value={c.value} checked={data.condition === c.value} onChange={() => set('condition', c.value)} className="mt-0.5" />
                     <div>
-                      <div className="font-medium text-sm">{c.label}</div>
-                      <div className="text-xs text-gray-500">{c.description}</div>
+                      <div className="font-semibold text-sm text-white">{c.label}</div>
+                      <div className="text-xs text-muted mt-0.5">{c.description}</div>
                     </div>
                   </label>
                 ))}
@@ -239,7 +264,7 @@ export default function CreateListing() {
         {/* Step 2: Description & images */}
         {step === 2 && (
           <div className="space-y-4">
-            <h2 className="font-semibold text-lg mb-4">Kirjeldus & pildid</h2>
+            <h2 className="font-bold text-lg text-white">Kirjeldus & pildid</h2>
             <div>
               <label className="label">Pealkiri *</label>
               <div className="flex gap-2">
@@ -253,24 +278,24 @@ export default function CreateListing() {
             </div>
             <div>
               <label className="label">Pildid (min 1, max 10)</label>
-              <label className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-primary-400 transition-colors block">
+              <label className="border-2 border-dashed border-surface-border rounded-xl p-8 text-center cursor-pointer hover:border-primary-600/50 transition-colors block">
                 <input type="file" accept="image/*" multiple className="hidden" onChange={e => handleImageUpload(Array.from(e.target.files))} />
-                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-sm text-gray-500">Kliki piltide üleslaadimiseks</p>
-                <p className="text-xs text-gray-400 mt-1">JPG, PNG, WebP • Max 5MB per pilt</p>
+                <Upload className="w-8 h-8 text-muted mx-auto mb-2" />
+                <p className="text-sm text-muted-light">Kliki piltide üleslaadimiseks</p>
+                <p className="text-xs text-muted mt-1">JPG, PNG, WebP • Max 5MB per pilt</p>
               </label>
               {images.length > 0 && (
                 <div className="grid grid-cols-4 gap-2 mt-3">
                   {images.map((img, i) => (
-                    <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                    <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-dark-light">
                       <img src={img.url} alt="" className="w-full h-full object-cover" />
                       <button
                         onClick={() => setImages(prev => prev.filter((_, j) => j !== i))}
-                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                        className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center"
                       >
                         <X className="w-3 h-3" />
                       </button>
-                      {i === 0 && <div className="absolute bottom-1 left-1 bg-primary-600 text-white text-xs px-1.5 py-0.5 rounded">Peapilt</div>}
+                      {i === 0 && <div className="absolute bottom-1 left-1 bg-primary-600 text-white text-xs px-1.5 py-0.5 rounded font-semibold">Peapilt</div>}
                     </div>
                   ))}
                 </div>
@@ -282,14 +307,21 @@ export default function CreateListing() {
         {/* Step 3: Price & location */}
         {step === 3 && (
           <div className="space-y-4">
-            <h2 className="font-semibold text-lg mb-4">Hind & asukoht</h2>
+            <h2 className="font-bold text-lg text-white">Hind & asukoht</h2>
+
             <div>
-              <label className="label">Hind (€) *</label>
+              <label className="label">
+                {data.listing_type === 'auction' ? 'Alghind (€) *' :
+                 data.listing_type === 'wanted'  ? 'Maksimaalne eelarve (€)' :
+                                                   'Hind (€) *'}
+              </label>
               <input type="number" value={data.price} onChange={e => set('price', e.target.value)} placeholder="nt. 599" className="input" />
             </div>
+
+            {/* Rent fields */}
             {data.listing_type === 'rent' && (
-              <div className="space-y-4 border-t pt-4">
-                <h3 className="font-medium text-gray-700">Rendi tingimused</h3>
+              <div className="space-y-4 border-t border-surface-border pt-4">
+                <h3 className="font-semibold text-white text-sm">Rendi tingimused</h3>
                 <div>
                   <label className="label">Hind päevas (€) *</label>
                   <input type="number" value={data.rent_price_day || ''} onChange={e => set('rent_price_day', e.target.value)} placeholder="nt. 15" className="input" />
@@ -310,10 +342,25 @@ export default function CreateListing() {
                 </div>
               </div>
             )}
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={data.negotiable} onChange={e => set('negotiable', e.target.checked)} className="rounded text-primary-600" />
-              <span className="text-sm font-medium">Hind on kaubeldav</span>
-            </label>
+
+            {/* Auction fields */}
+            {data.listing_type === 'auction' && (
+              <div className="space-y-4 border-t border-surface-border pt-4">
+                <h3 className="font-semibold text-white text-sm">Oksjoni tingimused</h3>
+                <div>
+                  <label className="label">Oksjon lõpeb *</label>
+                  <input type="datetime-local" value={data.auction_ends_at || ''} onChange={e => set('auction_ends_at', e.target.value)} className="input" />
+                </div>
+              </div>
+            )}
+
+            {data.listing_type !== 'wanted' && (
+              <label className="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" checked={data.negotiable} onChange={e => set('negotiable', e.target.checked)} />
+                <span className="text-sm font-medium text-white">Hind on kaubeldav</span>
+              </label>
+            )}
+
             <div>
               <label className="label">Maakond *</label>
               <select value={data.county} onChange={e => set('county', e.target.value)} className="input">
@@ -331,36 +378,38 @@ export default function CreateListing() {
         {/* Step 4: Payment */}
         {step === 4 && (
           <div className="space-y-6">
-            <h2 className="font-semibold text-lg">Makse & avaldamine</h2>
+            <h2 className="font-bold text-lg text-white">Makse & avaldamine</h2>
 
             {/* Preview */}
-            <div className="bg-gray-50 rounded-xl p-4">
-              <h3 className="font-medium text-sm text-gray-500 mb-2">Eelvaade</h3>
-              <div className="font-semibold">{data.title}</div>
-              <div className="text-2xl font-bold text-primary-600 mt-1">{data.price ? `${data.price} €` : '—'}</div>
-              <div className="text-sm text-gray-500 mt-1">{data.county}{data.city ? `, ${data.city}` : ''}</div>
+            <div className="bg-dark-light border border-surface-border rounded-xl p-4">
+              <h3 className="font-semibold text-xs text-muted uppercase tracking-wider mb-2">Eelvaade</h3>
+              <div className="font-bold text-white">{data.title || '—'}</div>
+              <div className="text-2xl font-black text-primary-500 mt-1">{data.price ? `${data.price} €` : '—'}</div>
+              <div className="text-sm text-muted mt-1">{data.county}{data.city ? `, ${data.city}` : ''}</div>
             </div>
 
             {/* Plans */}
             <div>
-              <h3 className="font-medium mb-3">Vali pakett</h3>
-              <div className="grid grid-cols-2 gap-3">
+              <h3 className="font-semibold text-white mb-3">Vali pakett</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
-                  { v: 'kiirmüük', label: 'Kiirmüük', price: '1.99€', desc: '10 päeva aktiivne', badge: null },
-                  { v: 'standard', label: 'Standard', price: '3.99€', desc: '30 päeva aktiivne', badge: null },
-                  { v: 'premium', label: 'Premium', price: '5.99€', desc: '60 päeva aktiivne + esiletõstmine', badge: null },
+                  { v: 'kiirmüük', label: 'Kiirmüük', price: '1.99€', desc: '10 päeva aktiivne' },
+                  { v: 'standard', label: 'Standard', price: '3.99€', desc: '30 päeva aktiivne' },
+                  { v: 'premium',  label: 'Premium',  price: '5.99€', desc: '60 päeva + esiletõstmine' },
                 ].map(plan => (
                   <button
                     key={plan.v}
+                    type="button"
                     onClick={() => set('plan', plan.v)}
-                    className={`p-4 rounded-xl border-2 text-left transition-colors ${data.plan === plan.v ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}
+                    className={`p-4 rounded-xl border-2 text-left transition-all ${
+                      data.plan === plan.v
+                        ? 'border-primary-500 bg-primary-600/10'
+                        : 'border-surface-border hover:border-muted'
+                    }`}
                   >
-                    <div className="flex items-center gap-2">
-                      {plan.badge && <span>{plan.badge}</span>}
-                      <span className="font-semibold">{plan.label}</span>
-                    </div>
-                    <div className="text-2xl font-bold text-primary-600 mt-1">{plan.price}</div>
-                    <div className="text-xs text-gray-500 mt-0.5">{plan.desc}</div>
+                    <div className="font-bold text-white">{plan.label}</div>
+                    <div className="text-2xl font-black text-primary-500 mt-1">{plan.price}</div>
+                    <div className="text-xs text-muted mt-0.5">{plan.desc}</div>
                   </button>
                 ))}
               </div>
@@ -369,24 +418,24 @@ export default function CreateListing() {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="btn btn-primary btn-lg w-full text-base"
+              className="btn btn-primary btn-lg w-full text-base font-bold"
             >
               {loading ? 'Töötleb...' : `Maksa ${data.plan === 'premium' ? '5.99€' : data.plan === 'standard' ? '3.99€' : '1.99€'} ja avalda`}
             </button>
-            <p className="text-xs text-gray-400 text-center">Turvaline makse Stripe kaudu</p>
+            <p className="text-xs text-muted text-center">Turvaline makse Stripe kaudu</p>
           </div>
         )}
 
         {/* Navigation */}
-        <div className="flex justify-between mt-6 pt-4 border-t border-gray-100">
+        <div className="flex justify-between mt-6 pt-4 border-t border-surface-border">
           {step > 0 ? (
-            <button onClick={() => setStep(s => s - 1)} className="btn btn-secondary">
-              <ChevronLeft className="w-4 h-4 mr-1" /> Eelmine
+            <button onClick={() => setStep(s => s - 1)} className="btn btn-secondary gap-1">
+              <ChevronLeft className="w-4 h-4" /> Eelmine
             </button>
           ) : <div />}
           {step < STEPS.length - 1 && (
-            <button onClick={() => setStep(s => s + 1)} className="btn btn-primary">
-              Järgmine <ChevronRight className="w-4 h-4 ml-1" />
+            <button onClick={() => setStep(s => s + 1)} className="btn btn-primary gap-1">
+              Järgmine <ChevronRight className="w-4 h-4" />
             </button>
           )}
         </div>

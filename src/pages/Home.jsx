@@ -32,7 +32,7 @@ export default function Home() {
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pt-16 pb-12 text-center">
           <div className="inline-flex items-center gap-2 bg-primary-600/10 border border-primary-600/20 text-primary-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 uppercase tracking-widest">
             <Zap className="w-3.5 h-3.5" />
-            Eesti nr. 1 elektriliikurite turg
+            OST, MÜÜK, RENT JA OKSJON
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">

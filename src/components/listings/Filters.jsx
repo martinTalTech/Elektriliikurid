@@ -4,7 +4,7 @@ import { SCOOTER_BRANDS, CROSS_BRANDS, MOPED_BRANDS, EBIKE_BRANDS, CONDITIONS } 
 import { COUNTIES } from '../../constants/counties'
 
 export default function Filters({ filters, onChange }) {
-  const [open, setOpen] = useState({ type: true, price: true })
+  const [open, setOpen] = useState({ listing_type: true, type: true, price: true })
 
   const brands =
     filters.vehicle_type === 'cross'     ? CROSS_BRANDS :
@@ -32,6 +32,30 @@ export default function Filters({ filters, onChange }) {
           </button>
         )}
       </div>
+
+      {/* Kuulutuse liik */}
+      <FilterSection title="Kuulutuse liik" open={open.listing_type} toggle={() => toggle('listing_type')}>
+        <div className="space-y-2 pt-1">
+          {[
+            { value: '',        label: 'Kõik',        color: 'text-muted-light' },
+            { value: 'sale',    label: '💰 Müük',     color: 'text-green-400' },
+            { value: 'rent',    label: '🔑 Rent',     color: 'text-blue-400' },
+            { value: 'auction', label: '🔨 Oksjon',   color: 'text-orange-400' },
+            { value: 'wanted',  label: '🔍 Otsitakse', color: 'text-purple-400' },
+          ].map(opt => (
+            <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
+              <input
+                type="radio"
+                name="listing_type"
+                value={opt.value}
+                checked={(filters.listing_type || '') === opt.value}
+                onChange={() => set('listing_type', opt.value || undefined)}
+              />
+              <span className={`text-sm group-hover:text-white transition-colors ${opt.color}`}>{opt.label}</span>
+            </label>
+          ))}
+        </div>
+      </FilterSection>
 
       {/* Tüüp */}
       <FilterSection title="Sõiduki tüüp" open={open.type} toggle={() => toggle('type')}>

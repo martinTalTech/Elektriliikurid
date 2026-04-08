@@ -25,7 +25,7 @@ export default function Footer() {
             <div className="space-y-1 text-sm text-muted">
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-primary-500 flex-shrink-0" />
-                <span>info@elektriliikurid.ee</span>
+                <span>info@elektriliikur.ee</span>
               </div>
             </div>
           </div>

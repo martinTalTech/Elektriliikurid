@@ -35,18 +35,11 @@ export default function Navbar() {
 
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-1">
-            <NavLink to="/kuulutused" active={isActive('/kuulutused')}>
-              Müügi kuulutused
-            </NavLink>
-            <NavLink to="/kuulutused?tüüp=rent" active={false}>
-              Rendi kuulutused
-            </NavLink>
-            <NavLink to="/meist" active={isActive('/meist')}>
-              Meist
-            </NavLink>
-            <NavLink to="/kkk" active={isActive('/kkk')}>
-              KKK
-            </NavLink>
+            <NavLink to="/kuulutused?listing_type=sale" active={false}>💰 Müük</NavLink>
+            <NavLink to="/kuulutused?listing_type=rent" active={false}>🔑 Rent</NavLink>
+            <NavLink to="/kuulutused?listing_type=auction" active={false}>🔨 Oksjon</NavLink>
+            <NavLink to="/kuulutused?listing_type=wanted" active={false}>🔍 Otsitakse</NavLink>
+            <NavLink to="/meist" active={isActive('/meist')}>Meist</NavLink>
           </div>
 
           {/* Desktop auth */}
@@ -93,8 +86,10 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="md:hidden border-t border-surface-border bg-dark-dark">
           <div className="px-4 py-3 space-y-1">
-            <MobileLink to="/kuulutused" onClick={() => setMobileOpen(false)}>Müügi kuulutused</MobileLink>
-            <MobileLink to="/kuulutused?tüüp=rent" onClick={() => setMobileOpen(false)}>Rendi kuulutused</MobileLink>
+            <MobileLink to="/kuulutused?listing_type=sale"    onClick={() => setMobileOpen(false)}>💰 Müük</MobileLink>
+            <MobileLink to="/kuulutused?listing_type=rent"    onClick={() => setMobileOpen(false)}>🔑 Rent</MobileLink>
+            <MobileLink to="/kuulutused?listing_type=auction" onClick={() => setMobileOpen(false)}>🔨 Oksjon</MobileLink>
+            <MobileLink to="/kuulutused?listing_type=wanted"  onClick={() => setMobileOpen(false)}>🔍 Otsitakse</MobileLink>
             <MobileLink to="/meist" onClick={() => setMobileOpen(false)}>Meist</MobileLink>
             <MobileLink to="/kkk" onClick={() => setMobileOpen(false)}>KKK</MobileLink>
           </div>

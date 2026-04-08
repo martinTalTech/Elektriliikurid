@@ -41,9 +41,15 @@ export default function ListingCard({ listing }) {
               <Star className="w-3 h-3 fill-white" /> TOP
             </span>
           )}
-          {listing.listing_type === 'rent' && (
-            <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-              RENT
+          {listing.listing_type && listing.listing_type !== 'sale' && (
+            <span className={`text-white text-xs font-bold px-2 py-0.5 rounded-full ${
+              listing.listing_type === 'rent'    ? 'bg-blue-600' :
+              listing.listing_type === 'auction' ? 'bg-orange-600' :
+              listing.listing_type === 'wanted'  ? 'bg-purple-600' : ''
+            }`}>
+              {listing.listing_type === 'rent'    ? '🔑 RENT' :
+               listing.listing_type === 'auction' ? '🔨 OKSJON' :
+               listing.listing_type === 'wanted'  ? '🔍 OTSITAKSE' : ''}
             </span>
           )}
         </div>
