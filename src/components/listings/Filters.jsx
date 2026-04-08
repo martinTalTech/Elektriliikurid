@@ -15,9 +15,10 @@ export default function Filters({ filters, onChange }) {
   const toggle = (key) => setOpen(prev => ({ ...prev, [key]: !prev[key] }))
   const set = (key, val) => onChange({ ...filters, [key]: val, page: 0 })
 
-  const activeCount = Object.entries(filters).filter(([k, v]) =>
-    !['page', 'sort', 'limit'].includes(k) && v && (Array.isArray(v) ? v.length : true)
-  ).length
+  const activeCount = Object.entries(filters).reduce((sum, [k, v]) => {
+    if (['page', 'sort', 'limit'].includes(k) || !v) return sum
+    return sum + (Array.isArray(v) ? v.length : 1)
+  }, 0)
 
   return (
     <div className="space-y-1">

@@ -1,7 +1,26 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Zap, Mail, Lock, User, Phone } from 'lucide-react'
+import { Zap, Mail, Lock, User, Phone, Eye, EyeOff, Check, X } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+
+function getPasswordStrength(pw) {
+  const checks = {
+    length: pw.length >= 8,
+    upper: /[A-Z]/.test(pw),
+    lower: /[a-z]/.test(pw),
+    number: /[0-9]/.test(pw),
+  }
+  const passed = Object.values(checks).filter(Boolean).length
+  const label = passed <= 1 ? 'Nõrk' : passed <= 2 ? 'Keskmine' : passed <= 3 ? 'Hea' : 'Tugev'
+  const color = passed <= 1 ? 'text-red-400' : passed <= 2 ? 'text-orange-400' : passed <= 3 ? 'text-yellow-400' : 'text-primary-400'
+  const barColor = passed <= 1 ? 'bg-red-500' : passed <= 2 ? 'bg-orange-500' : passed <= 3 ? 'bg-yellow-500' : 'bg-primary-500'
+  return { checks, passed, label, color, barColor }
+}
+
+function isValidPhone(phone) {
+  if (!phone) return true
+  return /^\+?[0-9]*$/.test(phone)
+}
 
 export default function Register() {
   const navigate = useNavigate()
@@ -9,9 +28,32 @@ export default function Register() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [phoneError, setPhoneError] = useState('')
+
+  const pw = getPasswordStrength(form.password)
+  const passwordValid = pw.checks.length && pw.checks.upper && pw.checks.lower && pw.checks.number
+
+  const handlePhoneChange = (e) => {
+    const val = e.target.value
+    if (val && !isValidPhone(val)) {
+      setPhoneError('Ainult + ja numbrid 0-9')
+    } else {
+      setPhoneError('')
+    }
+    setForm(f => ({ ...f, phone: val.replace(/[^+0-9]/g, '') }))
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!passwordValid) {
+      setError('Parool peab sisaldama vähemalt 8 tähemärki, suurt ja väikest tähte ning numbrit')
+      return
+    }
+    if (form.phone && !isValidPhone(form.phone)) {
+      setError('Telefoninumber tohib sisaldada ainult + ja numbreid')
+      return
+    }
     setLoading(true)
     setError('')
     const { data, error } = await supabase.auth.signUp({
@@ -77,8 +119,14 @@ export default function Register() {
               <label className="label">Telefon</label>
               <div className="relative">
                 <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
-                <input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+372..." className="input pl-10" />
+                <input
+                  value={form.phone}
+                  onChange={handlePhoneChange}
+                  placeholder="+372..."
+                  className={`input pl-10 ${phoneError ? 'border-red-500 focus:ring-red-500' : ''}`}
+                />
               </div>
+              {phoneError && <p className="text-xs text-red-400 mt-1">{phoneError}</p>}
             </div>
             <div>
               <label className="label">Email *</label>
@@ -91,11 +139,31 @@ export default function Register() {
               <label className="label">Parool *</label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
-                <input type="password" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} required minLength={8} className="input pl-10" placeholder="••••••••" />
+                <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} required className="input pl-10 pr-10" placeholder="••••••••" />
+                <button type="button" onClick={() => setShowPassword(s => !s)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted hover:text-white transition-colors">
+                  {showPassword ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                </button>
               </div>
-              <p className="text-xs text-muted mt-1.5">Minimaalselt 8 tähemärki</p>
+
+              {/* Password strength */}
+              {form.password && (
+                <div className="mt-2 space-y-2">
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${i <= pw.passed ? pw.barColor : 'bg-dark-lighter'}`} />
+                    ))}
+                  </div>
+                  <p className={`text-xs font-semibold ${pw.color}`}>{pw.label}</p>
+                  <div className="grid grid-cols-2 gap-1">
+                    <PasswordCheck ok={pw.checks.length} label="Vähemalt 8 tähemärki" />
+                    <PasswordCheck ok={pw.checks.upper} label="Suur täht (A-Z)" />
+                    <PasswordCheck ok={pw.checks.lower} label="Väike täht (a-z)" />
+                    <PasswordCheck ok={pw.checks.number} label="Number (0-9)" />
+                  </div>
+                </div>
+              )}
             </div>
-            <button type="submit" disabled={loading} className="btn btn-primary btn-lg w-full font-bold">
+            <button type="submit" disabled={loading || (form.password && !passwordValid)} className="btn btn-primary btn-lg w-full font-bold">
               {loading ? 'Konto loomine...' : 'Loo konto'}
             </button>
           </form>
@@ -108,6 +176,15 @@ export default function Register() {
           </p>
         </div>
       </div>
+    </div>
+  )
+}
+
+function PasswordCheck({ ok, label }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      {ok ? <Check className="w-3 h-3 text-primary-400" /> : <X className="w-3 h-3 text-muted" />}
+      <span className={`text-xs ${ok ? 'text-primary-400' : 'text-muted'}`}>{label}</span>
     </div>
   )
 }
