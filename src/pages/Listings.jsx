@@ -9,9 +9,10 @@ export default function Listings() {
   const [searchParams] = useSearchParams()
   const [showFilters, setShowFilters] = useState(false)
   const initTypes = searchParams.getAll('type').filter(Boolean)
+  const initListingType = searchParams.get('listing_type')
   const [filters, setFilters] = useState({
     vehicle_types: initTypes.length ? initTypes : undefined,
-    listing_type:  searchParams.get('listing_type') || undefined,
+    listing_types: initListingType ? [initListingType] : undefined,
     sort: 'newest',
     page: 0,
     limit: 20,

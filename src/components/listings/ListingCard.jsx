@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
-import { MapPin, Calendar, Gauge, Star } from 'lucide-react'
+import { MapPin, Calendar, Gauge, Star, Key, Gavel, Search } from 'lucide-react'
 import { formatPrice, formatDate, getConditionLabel, getPrimaryImage } from '../../utils/format'
+import VehicleIcon from '../VehicleIcon'
 
 export default function ListingCard({ listing }) {
   const primaryImage = getPrimaryImage(listing.listing_images)
@@ -16,12 +17,8 @@ export default function ListingCard({ listing }) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-5xl opacity-40">
-              {listing.vehicle_type === 'scooter' ? '🛴' :
-               listing.vehicle_type === 'cross'   ? '🏍️' :
-               listing.vehicle_type === 'mopeed'  ? '🛵' : '🚲'}
-            </span>
+          <div className="w-full h-full flex items-center justify-center text-muted/40">
+            <VehicleIcon type={listing.vehicle_type || 'scooter'} className="w-14 h-14" />
           </div>
         )}
 
@@ -42,14 +39,14 @@ export default function ListingCard({ listing }) {
             </span>
           )}
           {listing.listing_type && listing.listing_type !== 'sale' && (
-            <span className={`text-white text-xs font-bold px-2 py-0.5 rounded-full ${
+            <span className={`flex items-center gap-1 text-white text-xs font-bold px-2 py-0.5 rounded-full ${
               listing.listing_type === 'rent'    ? 'bg-blue-600' :
               listing.listing_type === 'auction' ? 'bg-orange-600' :
               listing.listing_type === 'wanted'  ? 'bg-purple-600' : ''
             }`}>
-              {listing.listing_type === 'rent'    ? '🔑 RENT' :
-               listing.listing_type === 'auction' ? '🔨 OKSJON' :
-               listing.listing_type === 'wanted'  ? '🔍 OTSITAKSE' : ''}
+              {listing.listing_type === 'rent'    && <><Key className="w-3 h-3" /> RENT</>}
+              {listing.listing_type === 'auction' && <><Gavel className="w-3 h-3" /> OKSJON</>}
+              {listing.listing_type === 'wanted'  && <><Search className="w-3 h-3" /> OTSITAKSE</>}
             </span>
           )}
         </div>

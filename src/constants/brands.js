@@ -46,12 +46,12 @@ export const CONDITIONS = [
 ]
 
 export const VEHICLE_TYPES = [
-  { value: 'scooter',   label: 'Tõukeratas',        icon: '🛴', gradient: 'from-green-900/40 to-green-800/20' },
-  { value: 'cross',     label: 'Elektri krossikas', icon: '🏍️', gradient: 'from-orange-900/40 to-orange-800/20' },
-  { value: 'mopeed',    label: 'Elektri mopeed',    icon: '🛵', gradient: 'from-blue-900/40 to-blue-800/20' },
-  { value: 'jalgratas', label: 'Elektri jalgratas',  icon: '🚲', gradient: 'from-teal-900/40 to-teal-800/20' },
-  { value: 'rula',      label: 'Elektri rula',       icon: '🛹', gradient: 'from-purple-900/40 to-purple-800/20' },
-  { value: 'monoratas', label: 'Monoratas',           icon: '🔵', gradient: 'from-yellow-900/40 to-yellow-800/20' },
+  { value: 'scooter',   label: 'Elektri tõukeratas', gradient: 'from-green-900/40 to-green-800/20' },
+  { value: 'cross',     label: 'Elektri krossikas', gradient: 'from-orange-900/40 to-orange-800/20' },
+  { value: 'mopeed',    label: 'Elektri mopeed',    gradient: 'from-blue-900/40 to-blue-800/20' },
+  { value: 'jalgratas', label: 'Elektri jalgratas',  gradient: 'from-teal-900/40 to-teal-800/20' },
+  { value: 'rula',      label: 'Elektri rula',       gradient: 'from-purple-900/40 to-purple-800/20' },
+  { value: 'monoratas', label: 'Monoratas',           gradient: 'from-yellow-900/40 to-yellow-800/20' },
 ]
 
 export const BRANDS_BY_TYPE = {

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Zap } from 'lucide-react'
+import { Zap, Mail, Lock } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 
 export default function Login() {
@@ -27,9 +27,11 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary-900/10 via-transparent to-transparent pointer-events-none" />
+
+      <div className="w-full max-w-md relative">
+        <div className="text-center mb-8 animate-fade-in-up">
           <Link to="/" className="inline-flex items-center gap-2 mb-4">
             <div className="bg-primary-600 rounded-lg p-1.5">
               <Zap className="w-5 h-5 text-white fill-white" />
@@ -44,7 +46,22 @@ export default function Login() {
           <p className="text-sm text-muted mt-1">Tere tulemast tagasi</p>
         </div>
 
-        <div className="bg-dark-medium border border-surface-border rounded-2xl p-7">
+        <div className="animate-fade-in-up-delay-1 bg-dark-medium border border-surface-border rounded-2xl p-7 shadow-card">
+          {/* Google button first - more prominent */}
+          <button onClick={handleGoogle} className="btn btn-secondary w-full gap-3 py-3 text-sm font-semibold hover:bg-dark-lighter">
+            <img src="https://www.google.com/favicon.ico" alt="" className="w-5 h-5" />
+            Jätka Google kontoga
+          </button>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-surface-border" />
+            </div>
+            <div className="relative flex justify-center text-xs">
+              <span className="bg-dark-medium px-3 text-muted uppercase tracking-widest">või emailiga</span>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="bg-red-900/30 border border-red-800 text-red-400 text-sm p-3 rounded-lg">
@@ -53,25 +70,31 @@ export default function Login() {
             )}
             <div>
               <label className="label">Email</label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                required
-                className="input"
-                placeholder="sinu@email.ee"
-              />
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                  required
+                  className="input pl-10"
+                  placeholder="sinu@email.ee"
+                />
+              </div>
             </div>
             <div>
               <label className="label">Parool</label>
-              <input
-                type="password"
-                value={form.password}
-                onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                required
-                className="input"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+                <input
+                  type="password"
+                  value={form.password}
+                  onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                  required
+                  className="input pl-10"
+                  placeholder="••••••••"
+                />
+              </div>
             </div>
             <div className="text-right">
               <Link to="/unustasin-parooli" className="text-sm text-primary-500 hover:text-primary-400 transition-colors">
@@ -83,21 +106,7 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="relative my-5">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-surface-border" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-dark-medium px-3 text-muted uppercase tracking-widest">või</span>
-            </div>
-          </div>
-
-          <button onClick={handleGoogle} className="btn btn-secondary w-full gap-2">
-            <img src="https://www.google.com/favicon.ico" alt="" className="w-4 h-4" />
-            Jätka Google'iga
-          </button>
-
-          <p className="text-center text-sm text-muted mt-5">
+          <p className="text-center text-sm text-muted mt-6">
             Pole kontot?{' '}
             <Link to="/registreeru" className="text-primary-500 hover:text-primary-400 font-semibold transition-colors">
               Registreeru

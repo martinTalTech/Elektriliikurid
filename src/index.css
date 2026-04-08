@@ -25,11 +25,11 @@
   }
 
   .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-500 px-4 py-2 shadow-sm;
+    @apply btn bg-primary-600 text-white hover:bg-primary-500 hover:shadow-lg hover:shadow-primary-600/25 px-4 py-2 shadow-sm active:scale-[0.97];
   }
 
   .btn-secondary {
-    @apply btn bg-dark-light text-white border border-surface-border hover:bg-dark-lighter hover:border-muted px-4 py-2;
+    @apply btn bg-dark-light text-white border border-surface-border hover:bg-dark-lighter hover:border-muted px-4 py-2 active:scale-[0.97];
   }
 
   .btn-lg {
@@ -37,7 +37,7 @@
   }
 
   .input {
-    @apply w-full rounded-lg border border-surface-border bg-dark-light px-3 py-2 text-sm text-white placeholder-muted focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors;
+    @apply w-full rounded-lg border border-surface-border bg-dark-light px-3.5 py-2.5 text-sm text-white placeholder-muted focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all;
   }
 
   .label {
@@ -45,7 +45,7 @@
   }
 
   .card {
-    @apply bg-surface rounded-xl border border-surface-border overflow-hidden hover:border-muted transition-all duration-200 shadow-card hover:shadow-card-hover;
+    @apply bg-surface rounded-xl border border-surface-border overflow-hidden hover:border-primary-600/40 transition-all duration-300 shadow-card hover:shadow-card-hover hover:-translate-y-0.5;
   }
 
   .section-title {
@@ -55,6 +55,37 @@
   .page-container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-fade-in-up-delay-1 {
+  animation: fadeInUp 0.5s ease-out 0.1s forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-up-delay-2 {
+  animation: fadeInUp 0.5s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-up-delay-3 {
+  animation: fadeInUp 0.5s ease-out 0.3s forwards;
+  opacity: 0;
 }
 
 /* Custom scrollbar */

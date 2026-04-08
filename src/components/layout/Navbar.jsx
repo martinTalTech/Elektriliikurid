@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Zap, Menu, X, User, LogOut, Plus, ChevronDown } from 'lucide-react'
+import { Zap, Menu, X, User, LogOut, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 
@@ -17,13 +17,13 @@ export default function Navbar() {
   const isActive = (path) => location.pathname === path
 
   return (
-    <nav className="bg-dark-medium border-b border-surface-border sticky top-0 z-50 backdrop-blur-sm">
+    <nav className="bg-dark-medium/95 backdrop-blur-md border-b border-surface-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group flex-shrink-0">
-            <div className="bg-primary-600 rounded-lg p-1.5 group-hover:bg-primary-500 transition-colors">
+            <div className="bg-primary-600 rounded-lg p-1.5 group-hover:bg-primary-500 transition-colors shadow-sm">
               <Zap className="w-5 h-5 text-white fill-white" />
             </div>
             <div className="leading-none">
@@ -34,16 +34,16 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop nav links */}
-          <div className="hidden md:flex items-center gap-1">
-            <NavLink to="/kuulutused?listing_type=sale" active={false}>💰 Müük</NavLink>
-            <NavLink to="/kuulutused?listing_type=rent" active={false}>🔑 Rent</NavLink>
-            <NavLink to="/kuulutused?listing_type=auction" active={false}>🔨 Oksjon</NavLink>
-            <NavLink to="/kuulutused?listing_type=wanted" active={false}>🔍 Otsitakse</NavLink>
+          <div className="hidden lg:flex items-center gap-0.5">
+            <NavLink to="/kuulutused?listing_type=sale" active={false}>Müük</NavLink>
+            <NavLink to="/kuulutused?listing_type=rent" active={false}>Rent</NavLink>
+            <NavLink to="/kuulutused?listing_type=auction" active={false}>Oksjon</NavLink>
+            <NavLink to="/kuulutused?listing_type=wanted" active={false}>Otsitakse</NavLink>
             <NavLink to="/meist" active={isActive('/meist')}>Meist</NavLink>
           </div>
 
           {/* Desktop auth */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden lg:flex items-center gap-2">
             {user ? (
               <>
                 <Link to="/profiil" className="btn btn-secondary text-sm gap-1.5">
@@ -74,7 +74,7 @@ export default function Navbar() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg text-muted hover:text-white hover:bg-dark-light transition-colors"
+            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg text-muted hover:text-white hover:bg-dark-light transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -84,12 +84,12 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-surface-border bg-dark-dark">
+        <div className="lg:hidden border-t border-surface-border bg-dark-dark/95 backdrop-blur-md animate-fade-in-up">
           <div className="px-4 py-3 space-y-1">
-            <MobileLink to="/kuulutused?listing_type=sale"    onClick={() => setMobileOpen(false)}>💰 Müük</MobileLink>
-            <MobileLink to="/kuulutused?listing_type=rent"    onClick={() => setMobileOpen(false)}>🔑 Rent</MobileLink>
-            <MobileLink to="/kuulutused?listing_type=auction" onClick={() => setMobileOpen(false)}>🔨 Oksjon</MobileLink>
-            <MobileLink to="/kuulutused?listing_type=wanted"  onClick={() => setMobileOpen(false)}>🔍 Otsitakse</MobileLink>
+            <MobileLink to="/kuulutused?listing_type=sale"    onClick={() => setMobileOpen(false)}>Müük</MobileLink>
+            <MobileLink to="/kuulutused?listing_type=rent"    onClick={() => setMobileOpen(false)}>Rent</MobileLink>
+            <MobileLink to="/kuulutused?listing_type=auction" onClick={() => setMobileOpen(false)}>Oksjon</MobileLink>
+            <MobileLink to="/kuulutused?listing_type=wanted"  onClick={() => setMobileOpen(false)}>Otsitakse</MobileLink>
             <MobileLink to="/meist" onClick={() => setMobileOpen(false)}>Meist</MobileLink>
             <MobileLink to="/kkk" onClick={() => setMobileOpen(false)}>KKK</MobileLink>
           </div>
@@ -122,9 +122,9 @@ function NavLink({ to, active, children }) {
   return (
     <Link
       to={to}
-      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+      className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
         active
-          ? 'bg-dark-light text-white'
+          ? 'bg-primary-600/15 text-primary-400'
           : 'text-muted-light hover:text-white hover:bg-dark-light'
       }`}
     >
