@@ -9,6 +9,7 @@ import Profile from './pages/Profile'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import ForgotPassword from './pages/auth/ForgotPassword'
+import ResetPassword from './pages/auth/ResetPassword'
 import About from './pages/static/About'
 import FAQ from './pages/static/FAQ'
 import Terms from './pages/static/Terms'
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/logi-sisse" element={<Login />} />
           <Route path="/registreeru" element={<Register />} />
           <Route path="/unustasin-parooli" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/meist" element={<About />} />
           <Route path="/kkk" element={<FAQ />} />
           <Route path="/tingimused" element={<Terms />} />

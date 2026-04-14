@@ -4,9 +4,9 @@ import { Check, ChevronRight, ChevronLeft, Upload, X, Banknote, Key, Gavel, Sear
 import { supabase } from '../lib/supabase'
 import VehicleIcon from '../components/VehicleIcon'
 import { useAuth } from '../hooks/useAuth'
-import { BRANDS_BY_TYPE, VEHICLE_TYPES, CONDITIONS } from '../constants/brands'
+import { BRANDS_BY_TYPE, MODELS_BY_BRAND, VEHICLE_TYPES, CONDITIONS } from '../constants/brands'
 import { COUNTIES } from '../constants/counties'
-import { getStripe } from '../lib/stripe'
+// import { getStripe } from '../lib/stripe' // TODO: enable when Stripe is live
 
 const STEPS = ['Sõiduki andmed', 'Tehniline info', 'Kirjeldus & pildid', 'Hind & asukoht', 'Makse']
 
@@ -18,7 +18,7 @@ export default function CreateListing() {
   const [images, setImages] = useState([])
   const [data, setData] = useState({
     listing_type: 'sale',
-    vehicle_type: '', brand: '', model: '', year: new Date().getFullYear(), color: '',
+    vehicle_type: '', brand: '', custom_brand: '', model: '', custom_model: '', year: new Date().getFullYear(), color: '',
     motor_power_w: '', battery_capacity_wh: '', max_speed_kmh: '', range_km: '', mileage_km: '', charge_cycles: '',
     condition: 'good', title: '', description: '',
     price: '', negotiable: false, county: '', city: '',
@@ -42,10 +42,14 @@ export default function CreateListing() {
   const set = (key, val) => setData(d => ({ ...d, [key]: val }))
   const brands = BRANDS_BY_TYPE[data.vehicle_type] || BRANDS_BY_TYPE.scooter
 
+  const actualBrand = data.brand === 'Muu' ? data.custom_brand : data.brand
+  const models = MODELS_BY_BRAND[data.brand] || []
+  const actualModel = data.model === 'Muu' ? data.custom_model : data.model
+
   const autoTitle = () => {
-    if (data.brand && data.model && data.year) {
+    if (actualBrand && actualModel && data.year) {
       const cond = CONDITIONS.find(c => c.value === data.condition)
-      set('title', `${data.year} ${data.brand} ${data.model} — ${cond?.label || 'heas seisukorras'}`)
+      set('title', `${data.year} ${actualBrand} ${actualModel} — ${cond?.label || 'heas seisukorras'}`)
     }
   }
 
@@ -70,7 +74,7 @@ export default function CreateListing() {
         user_id: user.id,
         status: 'pending_payment',
         vehicle_type: data.vehicle_type,
-        brand: data.brand, model: data.model, year: parseInt(data.year), color: data.color,
+        brand: actualBrand, model: actualModel, year: parseInt(data.year), color: data.color,
         motor_power_w: data.motor_power_w ? parseInt(data.motor_power_w) : null,
         battery_capacity_wh: data.battery_capacity_wh ? parseInt(data.battery_capacity_wh) : null,
         max_speed_kmh: data.max_speed_kmh ? parseInt(data.max_speed_kmh) : null,
@@ -89,7 +93,15 @@ export default function CreateListing() {
         auction_ends_at: data.auction_ends_at || null,
       }).select().single()
 
-      if (error) throw error
+      if (error) {
+        if (error.message.includes('vehicle_type_check')) {
+          alert('Viga: palun vali sõiduki tüüp')
+        } else {
+          alert('Viga: ' + error.message)
+        }
+        setLoading(false)
+        return
+      }
 
       // Upload images
       for (let i = 0; i < images.length; i++) {
@@ -98,21 +110,11 @@ export default function CreateListing() {
         })
       }
 
-      // Stripe checkout
-      const amount = data.plan === 'premium' ? 599 : 299
-      const stripe = await getStripe()
-      // In a real app, create checkout session via backend/edge function
-      // For now, navigate to success
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-        },
-        body: JSON.stringify({ listing_id: listing.id, plan: data.plan })
-      })
-      const { url } = await res.json()
-      window.location.href = url
+      // TODO: Stripe checkout - enable when live
+      // For now, activate listing directly (test mode)
+      await supabase.from('listings').update({ status: 'active' }).eq('id', listing.id)
+      alert('Kuulutus edukalt lisatud!')
+      window.location.hash = '#/kuulutused/' + listing.id
     } catch (err) {
       alert('Viga: ' + err.message)
     } finally {
@@ -193,14 +195,41 @@ export default function CreateListing() {
             </div>
             <div>
               <label className="label">Mark *</label>
-              <select value={data.brand} onChange={e => set('brand', e.target.value)} className="input">
+              <select value={data.brand} onChange={e => { set('brand', e.target.value); if (e.target.value !== 'Muu') set('custom_brand', ''); set('model', ''); set('custom_model', '') }} className="input">
                 <option value="">Vali mark</option>
                 {brands.map(b => <option key={b} value={b}>{b}</option>)}
               </select>
+              {data.brand === 'Muu' && (
+                <input
+                  value={data.custom_brand}
+                  onChange={e => set('custom_brand', e.target.value)}
+                  placeholder="Sisesta margi nimi"
+                  className="input mt-2"
+                  autoFocus
+                />
+              )}
             </div>
             <div>
               <label className="label">Mudel *</label>
-              <input value={data.model} onChange={e => set('model', e.target.value)} placeholder="nt. Pro 2" className="input" />
+              {models.length > 0 ? (
+                <>
+                  <select value={data.model} onChange={e => { set('model', e.target.value); if (e.target.value !== 'Muu') set('custom_model', '') }} className="input">
+                    <option value="">Vali mudel</option>
+                    {models.map(m => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                  {data.model === 'Muu' && (
+                    <input
+                      value={data.custom_model}
+                      onChange={e => set('custom_model', e.target.value)}
+                      placeholder="Sisesta mudeli nimi"
+                      className="input mt-2"
+                      autoFocus
+                    />
+                  )}
+                </>
+              ) : (
+                <input value={data.model} onChange={e => set('model', e.target.value)} placeholder="nt. Pro 2" className="input" />
+              )}
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>

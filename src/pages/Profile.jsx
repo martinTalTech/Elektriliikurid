@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { supabase } from '../lib/supabase'
 import { formatPrice, formatDate } from '../utils/format'
-import { Plus, Trash2, ClipboardList } from 'lucide-react'
+import { Plus, Trash2, ClipboardList, User, Mail, Calendar, Settings, LogOut } from 'lucide-react'
 import VehicleIcon from '../components/VehicleIcon'
 
 export default function Profile() {
@@ -46,20 +46,49 @@ export default function Profile() {
     setListings(prev => prev.filter(l => l.id !== id))
   }
 
+  const displayName = user.user_metadata?.name || user.user_metadata?.full_name || user.email?.split('@')[0]
+  const initials = displayName ? displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : '?'
+  const memberSince = user.created_at ? new Date(user.created_at).toLocaleDateString('et-EE', { year: 'numeric', month: 'long' }) : ''
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    window.location.hash = '#/'
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Minu profiil</h1>
-        <Link to="/lisa-kuulutus" className="btn btn-primary text-sm">
-          <Plus className="w-4 h-4 mr-1.5" /> Lisa kuulutus
-        </Link>
+      {/* Profile header */}
+      <div className="bg-dark-medium border border-surface-border rounded-2xl p-6 mb-6">
+        <div className="flex items-center gap-5">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/20">
+            <span className="text-2xl font-bold text-white">{initials}</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-bold text-white truncate">{displayName}</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <Mail className="w-4 h-4 text-muted flex-shrink-0" />
+              <span className="text-muted-light text-sm">{user.email}</span>
+            </div>
+            {memberSince && (
+              <div className="flex items-center gap-2 mt-1">
+                <Calendar className="w-4 h-4 text-muted flex-shrink-0" />
+                <span className="text-muted text-sm">Liitunud {memberSince}</span>
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Link to="/lisa-kuulutus" className="btn btn-primary text-sm">
+              <Plus className="w-4 h-4 mr-1.5" /> Lisa kuulutus
+            </Link>
+            <button onClick={handleLogout} className="btn btn-secondary text-sm gap-1.5" title="Logi välja">
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="bg-gray-50 rounded-xl p-4 mb-6">
-        <div className="font-medium">{user.email}</div>
-      </div>
-
-      <div className="flex gap-2 mb-6 border-b border-gray-200">
+      {/* Tabs */}
+      <div className="flex gap-2 mb-6 border-b border-surface-border">
         {[
           { key: 'active', label: 'Aktiivsed' },
           { key: 'expired', label: 'Aegunud' },
@@ -68,7 +97,7 @@ export default function Profile() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${tab === t.key ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${tab === t.key ? 'border-primary-500 text-primary-400' : 'border-transparent text-muted hover:text-muted-light'}`}
           >
             {t.label} ({listings.filter(l => t.key === 'all' ? true : l.status === t.key).length})
           </button>
@@ -77,7 +106,7 @@ export default function Profile() {
 
       {loading ? (
         <div className="space-y-3">
-          {[1,2,3].map(i => <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />)}
+          {[1,2,3].map(i => <div key={i} className="h-20 bg-dark-light rounded-xl animate-pulse" />)}
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-12">
@@ -91,25 +120,25 @@ export default function Profile() {
           {filtered.map(l => {
             const img = l.listing_images?.find(i => i.is_primary)?.url
             return (
-              <div key={l.id} className="card flex items-center gap-4 p-4">
-                <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+              <div key={l.id} className="bg-dark-medium border border-surface-border rounded-xl flex items-center gap-4 p-4 hover:border-primary-500/30 transition-colors">
+                <div className="w-16 h-16 rounded-lg overflow-hidden bg-dark-light flex-shrink-0">
                   {img ? <img src={img} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-muted"><VehicleIcon type={l.vehicle_type || 'scooter'} className="w-8 h-8" /></div>}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <Link to={`/kuulutused/${l.id}`} className="font-medium text-gray-900 hover:text-primary-600 truncate block">{l.title}</Link>
-                  <div className="text-sm text-primary-600 font-semibold">{formatPrice(l.price)}</div>
-                  <div className="text-xs text-gray-400">{formatDate(l.created_at)} • {l.views_count || 0} vaatamist</div>
+                  <Link to={`/kuulutused/${l.id}`} className="font-medium text-white hover:text-primary-400 truncate block">{l.title}</Link>
+                  <div className="text-sm text-primary-400 font-semibold">{formatPrice(l.price)}</div>
+                  <div className="text-xs text-muted">{formatDate(l.created_at)} • {l.views_count || 0} vaatamist</div>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                    l.status === 'active' ? 'bg-green-100 text-green-700' :
-                    l.status === 'pending_payment' ? 'bg-yellow-100 text-yellow-700' :
-                    l.status === 'expired' ? 'bg-gray-100 text-gray-600' :
-                    'bg-red-100 text-red-600'
+                    l.status === 'active' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
+                    l.status === 'pending_payment' ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20' :
+                    l.status === 'expired' ? 'bg-gray-500/10 text-gray-400 border border-gray-500/20' :
+                    'bg-red-500/10 text-red-400 border border-red-500/20'
                   }`}>
                     {l.status === 'active' ? 'Aktiivne' : l.status === 'pending_payment' ? 'Ootab makset' : l.status === 'expired' ? 'Aegunud' : 'Müüdud'}
                   </span>
-                  <button onClick={() => handleDelete(l.id)} className="text-red-400 hover:text-red-600 p-1">
+                  <button onClick={() => handleDelete(l.id)} className="text-red-400 hover:text-red-300 p-1 transition-colors">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
