@@ -19,10 +19,10 @@ export default function FAQ() {
         {FAQS.map((faq, i) => (
           <div key={i} className="card overflow-hidden">
             <button onClick={() => setOpen(open === i ? null : i)} className="flex items-center justify-between w-full p-5 text-left">
-              <span className="font-medium text-gray-900">{faq.q}</span>
-              <ChevronDown className={`w-5 h-5 text-gray-500 flex-shrink-0 ml-4 transition-transform ${open === i ? 'rotate-180' : ''}`} />
+              <span className="font-medium text-white">{faq.q}</span>
+              <ChevronDown className={`w-5 h-5 text-muted flex-shrink-0 ml-4 transition-transform ${open === i ? 'rotate-180' : ''}`} />
             </button>
-            {open === i && <div className="px-5 pb-5 text-gray-600 text-sm leading-relaxed">{faq.a}</div>}
+            {open === i && <div className="px-5 pb-5 text-muted-light text-sm leading-relaxed">{faq.a}</div>}
           </div>
         ))}
       </div>
