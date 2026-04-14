@@ -20,14 +20,33 @@ export default function ListingDetail() {
   useEffect(() => {
     async function load() {
       setLoading(true)
-      const { data } = await supabase
+      // Fetch listing + images
+      const { data, error } = await supabase
         .from('listings')
-        .select('*, listing_images(*), profiles(name, phone, email)')
+        .select('*, listing_images(*)')
         .eq('id', id)
         .single()
+
+      if (error) {
+        console.error('Listing fetch error:', error)
+        setLoading(false)
+        return
+      }
+
+      // Fetch seller profile separately
+      if (data?.user_id) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('name, phone, email')
+          .eq('id', data.user_id)
+          .single()
+        data.profiles = profile
+      }
+
       setListing(data)
       if (data) {
-        await supabase.from('listings').update({ views_count: (data.views_count || 0) + 1 }).eq('id', id)
+        // Update view count silently - don't block page load
+        supabase.from('listings').update({ views_count: (data.views_count || 0) + 1 }).eq('id', id).then()
       }
       setLoading(false)
     }
