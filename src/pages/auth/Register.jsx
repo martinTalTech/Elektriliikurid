@@ -30,6 +30,7 @@ export default function Register() {
   const [success, setSuccess] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [phoneError, setPhoneError] = useState('')
+  const [agreed, setAgreed] = useState(false)
 
   const pw = getPasswordStrength(form.password)
   const passwordValid = pw.checks.length && pw.checks.upper && pw.checks.lower && pw.checks.number
@@ -163,7 +164,21 @@ export default function Register() {
                 </div>
               )}
             </div>
-            <button type="submit" disabled={loading || (form.password && !passwordValid)} className="btn btn-primary btn-lg w-full font-bold">
+            <label className="flex items-start gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={e => setAgreed(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded border-surface-border bg-dark-light text-primary-500 focus:ring-primary-500"
+              />
+              <span className="text-xs text-muted-light leading-relaxed">
+                Nõustun{' '}
+                <Link to="/tingimused" className="text-primary-400 hover:text-primary-300 underline" target="_blank">kasutustingimuste</Link>
+                {' '}ja{' '}
+                <Link to="/privaatsus" className="text-primary-400 hover:text-primary-300 underline" target="_blank">privaatsuspoliitikaga</Link>
+              </span>
+            </label>
+            <button type="submit" disabled={loading || !agreed || (form.password && !passwordValid)} className="btn btn-primary btn-lg w-full font-bold">
               {loading ? 'Konto loomine...' : 'Loo konto'}
             </button>
           </form>

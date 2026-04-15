@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import ScrollToTop from './components/ScrollToTop'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
+import CookieConsent from './components/CookieConsent'
 import Home from './pages/Home'
 import Listings from './pages/Listings'
 import ListingDetail from './pages/ListingDetail'
@@ -39,6 +40,7 @@ export default function App() {
         </Routes>
       </main>
       <Footer />
+      <CookieConsent />
     </div>
   )
 }
