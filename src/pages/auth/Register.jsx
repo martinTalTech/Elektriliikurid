@@ -63,7 +63,12 @@ export default function Register() {
       options: { data: { name: form.name, phone: form.phone } }
     })
     if (error) {
-      setError(error.message)
+      // Ära näita Supabase sisemisi veateateid kasutajale
+      if (error.message?.toLowerCase().includes('already registered')) {
+        setError('See e-posti aadress on juba registreeritud.')
+      } else {
+        setError('Registreerimine ebaõnnestus. Kontrolli andmeid ja proovi uuesti.')
+      }
       setLoading(false)
     } else {
       setSuccess(true)

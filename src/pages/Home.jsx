@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { Search, Zap, TrendingUp, ShieldCheck, ArrowRight, X, ClipboardList, Handshake } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { Search, Zap, TrendingUp, ShieldCheck, ArrowRight, X, ClipboardList, Handshake, Banknote, Key, Gavel, Check } from 'lucide-react'
 import { useListings } from '../hooks/useListings'
 import ListingGrid from '../components/listings/ListingGrid'
 import VehicleIcon from '../components/VehicleIcon'
@@ -18,7 +18,15 @@ const CATEGORIES = [
 
 export default function Home() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [selectedTypes, setSelectedTypes] = useState([])
+
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const el = document.getElementById(location.state.scrollTo)
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [location.state])
   const [selectedCounties, setSelectedCounties] = useState([])
   const [price_to, setPriceTo] = useState('')
   const [countyOpen, setCountyOpen] = useState(false)
@@ -205,6 +213,153 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Hinnakiri */}
+      <section id="hinnakiri" className="border-b border-surface-border bg-dark-darkest">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl font-black text-white mb-2">Hinnakiri</h2>
+            <p className="text-muted-light text-sm max-w-xl mx-auto">
+              Müügikuulutus on tasuline. Rendikuulutus ja oksjon on tasuta — maksad vahendustasu ainult eduka tehingu korral.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            {/* Müük */}
+            <div className="bg-dark-medium border border-surface-border rounded-2xl p-6 flex flex-col">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="bg-primary-600/10 rounded-xl p-2.5">
+                  <Banknote className="w-5 h-5 text-primary-500" />
+                </div>
+                <div>
+                  <div className="font-black text-white text-base">Müügikuulutus</div>
+                  <div className="text-xs text-muted">Tasuline ülespanek</div>
+                </div>
+              </div>
+
+              <div className="space-y-3 flex-1">
+                {[
+                  { name: 'Basic',    price: '2.99€', days: '30 päeva', popular: false },
+                  { name: 'Standard', price: '4.99€', days: '60 päeva', popular: true  },
+                  { name: 'Premium',  price: '9.99€', days: '90 päeva + esiletõstmine', popular: false },
+                ].map(p => (
+                  <div key={p.name} className={`relative flex items-center justify-between rounded-xl px-4 py-3 border ${
+                    p.popular
+                      ? 'border-primary-500/50 bg-primary-600/10'
+                      : 'border-surface-border bg-dark-light'
+                  }`}>
+                    {p.popular && (
+                      <span className="absolute -top-2.5 right-3 bg-primary-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                        Populaarseim
+                      </span>
+                    )}
+                    <div>
+                      <div className="font-bold text-white text-sm">{p.name}</div>
+                      <div className="text-xs text-muted">{p.days}</div>
+                    </div>
+                    <div className="font-black text-primary-500 text-lg">{p.price}</div>
+                  </div>
+                ))}
+                <div className="text-xs text-muted pt-1 flex items-start gap-1.5">
+                  <Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" />
+                  Lisavõimalus: esileht esiletus 2.99€ / 7 päeva
+                </div>
+              </div>
+
+              <Link to="/lisa-kuulutus" className="btn btn-primary w-full mt-5 font-bold text-sm">
+                Lisa müügikuulutus
+              </Link>
+            </div>
+
+            {/* Rent */}
+            <div className="bg-dark-medium border border-surface-border rounded-2xl p-6 flex flex-col">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="bg-teal-600/10 rounded-xl p-2.5">
+                  <Key className="w-5 h-5 text-teal-400" />
+                </div>
+                <div>
+                  <div className="font-black text-white text-base">Rendikuulutus</div>
+                  <div className="text-xs text-green-400 font-semibold">Ülespanek tasuta</div>
+                </div>
+              </div>
+
+              <div className="flex-1">
+                <div className="text-xs text-muted uppercase tracking-widest font-semibold mb-3">Vahendustasu rendiperioodilt</div>
+                <div className="space-y-2">
+                  {[
+                    { period: '1 – 3 päeva',   pct: '15%' },
+                    { period: '4 – 7 päeva',   pct: '12%' },
+                    { period: '8 – 14 päeva',  pct: '10%' },
+                    { period: '15 – 30 päeva', pct: '8%'  },
+                    { period: '31 – 90 päeva', pct: '6%'  },
+                    { period: '91+ päeva',     pct: '5%'  },
+                  ].map(r => (
+                    <div key={r.period} className="flex items-center justify-between bg-dark-light rounded-lg px-3 py-2 border border-surface-border">
+                      <span className="text-sm text-muted-light">{r.period}</span>
+                      <span className="font-bold text-white text-sm">{r.pct}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="text-xs text-muted mt-3 space-y-1">
+                  <div className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" /> Min. vahendustasu 2.00€ tehingu kohta</div>
+                  <div className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" /> Deposiidi haldus sisaldub — lisatasu puudub</div>
+                  <div className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" /> Automaatsed lepingud tasuta</div>
+                </div>
+              </div>
+
+              <Link to="/lisa-kuulutus" className="btn btn-secondary w-full mt-5 font-bold text-sm border-teal-600/40 hover:border-teal-500/60 text-teal-400">
+                Lisa rendikuulutus tasuta
+              </Link>
+            </div>
+
+            {/* Oksjon */}
+            <div className="bg-dark-medium border border-surface-border rounded-2xl p-6 flex flex-col">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="bg-orange-600/10 rounded-xl p-2.5">
+                  <Gavel className="w-5 h-5 text-orange-400" />
+                </div>
+                <div>
+                  <div className="font-black text-white text-base">Oksjonikuulutus</div>
+                  <div className="text-xs text-green-400 font-semibold">Ülespanek tasuta</div>
+                </div>
+              </div>
+
+              <div className="flex-1">
+                <div className="text-xs text-muted uppercase tracking-widest font-semibold mb-3">Vahendustasu lõpphinnast</div>
+                <div className="space-y-2">
+                  {[
+                    { range: 'Kuni 50€',       pct: '10%' },
+                    { range: '51€ – 200€',     pct: '8%'  },
+                    { range: '201€ – 500€',    pct: '7%'  },
+                    { range: '501€ – 1000€',   pct: '6%'  },
+                    { range: '1001€ ja rohkem', pct: '5%' },
+                  ].map(r => (
+                    <div key={r.range} className="flex items-center justify-between bg-dark-light rounded-lg px-3 py-2 border border-surface-border">
+                      <span className="text-sm text-muted-light">{r.range}</span>
+                      <span className="font-bold text-white text-sm">{r.pct}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="text-xs text-muted mt-3 space-y-1">
+                  <div className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" /> Min. vahendustasu 1.50€ oksjoni kohta</div>
+                  <div className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" /> Oksjoni kestus: 24h / 48h / 72h / 7 päeva</div>
+                  <div className="flex items-start gap-1.5"><Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" /> Premium oksjoni esiletus 3.99€</div>
+                </div>
+              </div>
+
+              <Link to="/lisa-kuulutus" className="btn btn-secondary w-full mt-5 font-bold text-sm border-orange-600/40 hover:border-orange-500/60 text-orange-400">
+                Lisa oksjonikuulutus tasuta
+              </Link>
+            </div>
+
+          </div>
+
+          <p className="text-center text-xs text-muted mt-6">
+            Kõik hinnad sisaldavad käibemaksu. Nevicus OÜ jätab endale õiguse hinnakirja muuta, teavitades kasutajaid 14 päeva ette.
+          </p>
         </div>
       </section>
 

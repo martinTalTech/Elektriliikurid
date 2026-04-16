@@ -6,9 +6,16 @@ import VehicleIcon from '../components/VehicleIcon'
 import { useAuth } from '../hooks/useAuth'
 import { BRANDS_BY_TYPE, MODELS_BY_BRAND, VEHICLE_TYPES, CONDITIONS } from '../constants/brands'
 import { COUNTIES } from '../constants/counties'
-// import { getStripe } from '../lib/stripe' // TODO: enable when Stripe is live
 
-const STEPS = ['Sõiduki andmed', 'Tehniline info', 'Kirjeldus & pildid', 'Hind & asukoht', 'Makse']
+const STEPS = ['Sõiduki andmed', 'Tehniline info', 'Kirjeldus & pildid', 'Hind & asukoht', 'Avalda']
+
+const PLANS = [
+  { v: 'basic',    label: 'Basic',    price: '2.99€', desc: '30 päeva aktiivne' },
+  { v: 'standard', label: 'Standard', price: '4.99€', desc: '60 päeva aktiivne', popular: true },
+  { v: 'premium',  label: 'Premium',  price: '9.99€', desc: '90 päeva + esiletõstmine' },
+]
+
+const PLAN_PRICES = { basic: '2.99€', standard: '4.99€', premium: '9.99€' }
 
 export default function CreateListing() {
   const { user } = useAuth()
@@ -31,6 +38,9 @@ export default function CreateListing() {
     { v: 'auction', icon: <Gavel className="w-5 h-5" />,    label: 'Oksjon',    desc: 'Enampakkumine' },
     { v: 'wanted',  icon: <Search className="w-5 h-5" />,   label: 'Otsitakse', desc: 'Otsin sõidukit' },
   ]
+
+  // Rent, oksjon ja otsitakse on tasuta — ainult müük nõuab makset
+  const isFree = data.listing_type !== 'sale'
 
   if (!user) return (
     <div className="max-w-lg mx-auto px-4 py-16 text-center">
@@ -56,9 +66,20 @@ export default function CreateListing() {
   const handleImageUpload = async (files) => {
     const uploaded = []
     for (const file of files) {
+      // Kontrolli faili suurust (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`"${file.name}" on liiga suur. Maksimaalne lubatud suurus on 5MB.`)
+        continue
+      }
+      // Kontrolli faili tüüpi
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        alert(`"${file.name}" — lubatud formaadid on ainult JPG, PNG ja WebP.`)
+        continue
+      }
+
       const ext = file.name.split('.').pop()
-      const path = `listings/${user.id}/${Date.now()}.${ext}`
-      const { data: up, error } = await supabase.storage.from('listing-images').upload(path, file)
+      const path = `listings/${user.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
+      const { error } = await supabase.storage.from('listing-images').upload(path, file)
       if (!error) {
         const { data: urlData } = supabase.storage.from('listing-images').getPublicUrl(path)
         uploaded.push({ url: urlData.publicUrl, path })
@@ -70,9 +91,12 @@ export default function CreateListing() {
   const handleSubmit = async () => {
     setLoading(true)
     try {
+      // Tasuta kuulutused (rent, oksjon, otsitakse) lähevad kohe aktiivseks
+      const initialStatus = isFree ? 'active' : 'pending_payment'
+
       const { data: listing, error } = await supabase.from('listings').insert({
         user_id: user.id,
-        status: 'pending_payment',
+        status: initialStatus,
         vehicle_type: data.vehicle_type,
         brand: actualBrand, model: actualModel, year: parseInt(data.year), color: data.color,
         motor_power_w: data.motor_power_w ? parseInt(data.motor_power_w) : null,
@@ -83,7 +107,8 @@ export default function CreateListing() {
         charge_cycles: data.charge_cycles ? parseInt(data.charge_cycles) : null,
         condition: data.condition,
         title: data.title, description: data.description,
-        price: parseFloat(data.price), negotiable: data.negotiable,
+        price: data.price ? parseFloat(data.price) : null,
+        negotiable: data.negotiable,
         county: data.county, city: data.city,
         listing_type: data.listing_type,
         rent_price_day: data.rent_price_day ? parseFloat(data.rent_price_day) : null,
@@ -103,21 +128,39 @@ export default function CreateListing() {
         return
       }
 
-      // Upload images
+      // Laadi pildid üles
       for (let i = 0; i < images.length; i++) {
         await supabase.from('listing_images').insert({
           listing_id: listing.id, url: images[i].url, order: i, is_primary: i === 0
         })
       }
 
-      // TODO: Stripe checkout - enable when live
-      // For now, activate listing directly (test mode)
-      await supabase.from('listings').update({ status: 'active' }).eq('id', listing.id)
-      alert('Kuulutus edukalt lisatud!')
-      window.location.hash = '#/kuulutused/' + listing.id
+      // Tasuta kuulutus — suuna otse kuulutuse lehele
+      if (isFree) {
+        navigate(`/kuulutused/${listing.id}?avaldatud=ok`)
+        return
+      }
+
+      // Müügikuulutus — käivita Stripe makse
+      // Saada kasutaja JWT token (mitte anon key!) edge function'ile
+      const { data: { session: authSession } } = await supabase.auth.getSession()
+      if (!authSession) throw new Error('Sessioon aegus, logi uuesti sisse')
+
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authSession.access_token}`,
+        },
+        body: JSON.stringify({ listing_id: listing.id, plan: data.plan })
+      })
+
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Makse alustamine ebaõnnestus')
+
+      window.location.href = json.url
     } catch (err) {
       alert('Viga: ' + err.message)
-    } finally {
       setLoading(false)
     }
   }
@@ -144,12 +187,11 @@ export default function CreateListing() {
       </div>
 
       <div className="bg-dark-medium border border-surface-border rounded-xl p-6">
-        {/* Step 0: Vehicle data */}
+        {/* Samm 0: Sõiduki andmed */}
         {step === 0 && (
           <div className="space-y-5">
             <h2 className="font-bold text-lg text-white">Sõiduki andmed</h2>
 
-            {/* Listing type */}
             <div>
               <label className="label">Kuulutuse tüüp *</label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-1">
@@ -172,7 +214,6 @@ export default function CreateListing() {
               </div>
             </div>
 
-            {/* Vehicle type */}
             <div>
               <label className="label">Sõiduki tüüp *</label>
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
@@ -234,7 +275,7 @@ export default function CreateListing() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="label">Aastakäik *</label>
-                <input type="number" value={data.year} onChange={e => set('year', e.target.value)} min="2015" max="2025" className="input" />
+                <input type="number" value={data.year} onChange={e => set('year', e.target.value)} min="2015" max="2030" className="input" />
               </div>
               <div>
                 <label className="label">Värvus</label>
@@ -244,17 +285,17 @@ export default function CreateListing() {
           </div>
         )}
 
-        {/* Step 1: Technical */}
+        {/* Samm 1: Tehniline info */}
         {step === 1 && (
           <div className="space-y-4">
             <h2 className="font-bold text-lg text-white">Tehniline info</h2>
             {[
-              { key: 'motor_power_w',       label: 'Mootori võimsus (W)',      placeholder: 'nt. 500' },
-              { key: 'battery_capacity_wh', label: 'Aku mahtuvus (Wh)',        placeholder: 'nt. 365' },
-              { key: 'max_speed_kmh',       label: 'Maksimaalne kiirus (km/h)', placeholder: 'nt. 25' },
-              { key: 'range_km',            label: 'Sõiduulatus (km)',          placeholder: 'nt. 40' },
-              { key: 'mileage_km',          label: 'Läbisõit (km)',             placeholder: 'nt. 500' },
-              { key: 'charge_cycles',       label: 'Laadimistsükleid (valikuline)', placeholder: 'nt. 150' },
+              { key: 'motor_power_w',       label: 'Mootori võimsus (W)',           placeholder: 'nt. 500' },
+              { key: 'battery_capacity_wh', label: 'Aku mahtuvus (Wh)',             placeholder: 'nt. 365' },
+              { key: 'max_speed_kmh',       label: 'Maksimaalne kiirus (km/h)',      placeholder: 'nt. 25' },
+              { key: 'range_km',            label: 'Sõiduulatus (km)',               placeholder: 'nt. 40' },
+              { key: 'mileage_km',          label: 'Läbisõit (km)',                  placeholder: 'nt. 500' },
+              { key: 'charge_cycles',       label: 'Laadimistsükleid (valikuline)',  placeholder: 'nt. 150' },
             ].map(f => (
               <div key={f.key}>
                 <label className="label">{f.label}</label>
@@ -282,7 +323,7 @@ export default function CreateListing() {
           </div>
         )}
 
-        {/* Step 2: Description & images */}
+        {/* Samm 2: Kirjeldus & pildid */}
         {step === 2 && (
           <div className="space-y-4">
             <h2 className="font-bold text-lg text-white">Kirjeldus & pildid</h2>
@@ -300,7 +341,13 @@ export default function CreateListing() {
             <div>
               <label className="label">Pildid (min 1, max 10)</label>
               <label className="border-2 border-dashed border-surface-border rounded-xl p-8 text-center cursor-pointer hover:border-primary-600/50 transition-colors block">
-                <input type="file" accept="image/*" multiple className="hidden" onChange={e => handleImageUpload(Array.from(e.target.files))} />
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  className="hidden"
+                  onChange={e => handleImageUpload(Array.from(e.target.files))}
+                />
                 <Upload className="w-8 h-8 text-muted mx-auto mb-2" />
                 <p className="text-sm text-muted-light">Kliki piltide üleslaadimiseks</p>
                 <p className="text-xs text-muted mt-1">JPG, PNG, WebP • Max 5MB per pilt</p>
@@ -325,7 +372,7 @@ export default function CreateListing() {
           </div>
         )}
 
-        {/* Step 3: Price & location */}
+        {/* Samm 3: Hind & asukoht */}
         {step === 3 && (
           <div className="space-y-4">
             <h2 className="font-bold text-lg text-white">Hind & asukoht</h2>
@@ -339,7 +386,6 @@ export default function CreateListing() {
               <input type="number" value={data.price} onChange={e => set('price', e.target.value)} placeholder="nt. 599" className="input" />
             </div>
 
-            {/* Rent fields */}
             {data.listing_type === 'rent' && (
               <div className="space-y-4 border-t border-surface-border pt-4">
                 <h3 className="font-semibold text-white text-sm">Rendi tingimused</h3>
@@ -364,7 +410,6 @@ export default function CreateListing() {
               </div>
             )}
 
-            {/* Auction fields */}
             {data.listing_type === 'auction' && (
               <div className="space-y-4 border-t border-surface-border pt-4">
                 <h3 className="font-semibold text-white text-sm">Oksjoni tingimused</h3>
@@ -396,12 +441,14 @@ export default function CreateListing() {
           </div>
         )}
 
-        {/* Step 4: Payment */}
+        {/* Samm 4: Avalda */}
         {step === 4 && (
           <div className="space-y-6">
-            <h2 className="font-bold text-lg text-white">Makse & avaldamine</h2>
+            <h2 className="font-bold text-lg text-white">
+              {isFree ? 'Avalda kuulutus' : 'Makse & avaldamine'}
+            </h2>
 
-            {/* Preview */}
+            {/* Eelvaade */}
             <div className="bg-dark-light border border-surface-border rounded-xl p-4">
               <h3 className="font-semibold text-xs text-muted uppercase tracking-wider mb-2">Eelvaade</h3>
               <div className="font-bold text-white">{data.title || '—'}</div>
@@ -409,45 +456,69 @@ export default function CreateListing() {
               <div className="text-sm text-muted mt-1">{data.county}{data.city ? `, ${data.city}` : ''}</div>
             </div>
 
-            {/* Plans */}
-            <div>
-              <h3 className="font-semibold text-white mb-3">Vali pakett</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {[
-                  { v: 'kiirmüük', label: 'Kiirmüük', price: '1.99€', desc: '10 päeva aktiivne' },
-                  { v: 'standard', label: 'Standard', price: '3.99€', desc: '30 päeva aktiivne' },
-                  { v: 'premium',  label: 'Premium',  price: '5.99€', desc: '60 päeva + esiletõstmine' },
-                ].map(plan => (
-                  <button
-                    key={plan.v}
-                    type="button"
-                    onClick={() => set('plan', plan.v)}
-                    className={`p-4 rounded-xl border-2 text-left transition-all ${
-                      data.plan === plan.v
-                        ? 'border-primary-500 bg-primary-600/10'
-                        : 'border-surface-border hover:border-muted'
-                    }`}
-                  >
-                    <div className="font-bold text-white">{plan.label}</div>
-                    <div className="text-2xl font-black text-primary-500 mt-1">{plan.price}</div>
-                    <div className="text-xs text-muted mt-0.5">{plan.desc}</div>
-                  </button>
-                ))}
+            {/* Tasuta kuulutus (rent / oksjon / otsitakse) */}
+            {isFree ? (
+              <div className="space-y-4">
+                <div className="bg-green-900/20 border border-green-800/50 rounded-xl p-4 text-center">
+                  <div className="text-green-400 font-bold text-lg">Tasuta avaldamine</div>
+                  <div className="text-sm text-muted mt-1">
+                    {data.listing_type === 'rent'
+                      ? 'Rendikuulutuse ülespanek on tasuta. Vahendustasu ainult eduka tehingu korral.'
+                      : data.listing_type === 'auction'
+                      ? 'Oksjonikuulutuse ülespanek on tasuta. Vahendustasu ainult eduka oksjoni korral.'
+                      : 'Otsitakse kuulutuse ülespanek on tasuta.'}
+                  </div>
+                </div>
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className="btn btn-primary btn-lg w-full text-base font-bold"
+                >
+                  {loading ? 'Avaldamine...' : 'Avalda kuulutus tasuta'}
+                </button>
               </div>
-            </div>
+            ) : (
+              /* Müügikuulutus — vali pakett ja maksa */
+              <div className="space-y-4">
+                <h3 className="font-semibold text-white mb-3">Vali pakett</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {PLANS.map(plan => (
+                    <button
+                      key={plan.v}
+                      type="button"
+                      onClick={() => set('plan', plan.v)}
+                      className={`p-4 rounded-xl border-2 text-left transition-all relative ${
+                        data.plan === plan.v
+                          ? 'border-primary-500 bg-primary-600/10'
+                          : 'border-surface-border hover:border-muted'
+                      }`}
+                    >
+                      {plan.popular && (
+                        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-primary-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap">
+                          Populaarseim
+                        </div>
+                      )}
+                      <div className="font-bold text-white">{plan.label}</div>
+                      <div className="text-2xl font-black text-primary-500 mt-1">{plan.price}</div>
+                      <div className="text-xs text-muted mt-0.5">{plan.desc}</div>
+                    </button>
+                  ))}
+                </div>
 
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="btn btn-primary btn-lg w-full text-base font-bold"
-            >
-              {loading ? 'Töötleb...' : `Maksa ${data.plan === 'premium' ? '5.99€' : data.plan === 'standard' ? '3.99€' : '1.99€'} ja avalda`}
-            </button>
-            <p className="text-xs text-muted text-center">Turvaline makse Stripe kaudu</p>
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className="btn btn-primary btn-lg w-full text-base font-bold"
+                >
+                  {loading ? 'Töötleb...' : `Maksa ${PLAN_PRICES[data.plan]} ja avalda`}
+                </button>
+                <p className="text-xs text-muted text-center">Turvaline makse Stripe kaudu</p>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Navigation */}
+        {/* Navigatsioon */}
         <div className="flex justify-between mt-6 pt-4 border-t border-surface-border">
           {step > 0 ? (
             <button onClick={() => setStep(s => s - 1)} className="btn btn-secondary gap-1">
