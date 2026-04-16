@@ -21,7 +21,18 @@ export function useListings(filters = {}) {
 
       if (filters.vehicle_types?.length) query = query.in('vehicle_type', filters.vehicle_types)
       else if (filters.vehicle_type) query = query.eq('vehicle_type', filters.vehicle_type)
-      if (filters.brand) query = query.eq('brand', filters.brand)
+      if (filters.brands?.length) {
+        if (filters.brands.includes('Muu') && filters.custom_brand) {
+          const otherBrands = filters.brands.filter(b => b !== 'Muu')
+          if (otherBrands.length) {
+            query = query.or(`brand.in.(${otherBrands.join(',')}),brand.ilike.%${filters.custom_brand}%`)
+          } else {
+            query = query.ilike('brand', `%${filters.custom_brand}%`)
+          }
+        } else {
+          query = query.in('brand', filters.brands)
+        }
+      } else if (filters.brand) query = query.eq('brand', filters.brand)
       if (filters.model) query = query.ilike('model', `%${filters.model}%`)
       if (filters.year_from) query = query.gte('year', filters.year_from)
       if (filters.year_to) query = query.lte('year', filters.year_to)
@@ -30,6 +41,7 @@ export function useListings(filters = {}) {
       if (filters.counties?.length) query = query.in('county', filters.counties)
       else if (filters.county) query = query.eq('county', filters.county)
       if (filters.condition?.length) query = query.in('condition', filters.condition)
+      if (filters.mileage_from) query = query.gte('mileage_km', filters.mileage_from)
       if (filters.mileage_to) query = query.lte('mileage_km', filters.mileage_to)
       if (filters.listing_types?.length) query = query.in('listing_type', filters.listing_types)
       else if (filters.listing_type) query = query.eq('listing_type', filters.listing_type)

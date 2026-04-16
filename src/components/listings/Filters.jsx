@@ -94,14 +94,48 @@ export default function Filters({ filters, onChange }) {
 
       {/* Mark */}
       <FilterSection title="Mark" open={open.brand} toggle={() => toggle('brand')}>
-        <select
-          value={filters.brand || ''}
-          onChange={e => set('brand', e.target.value || undefined)}
-          className="input text-sm mt-1"
-        >
-          <option value="">Kõik margid</option>
-          {brands.map(b => <option key={b} value={b}>{b}</option>)}
-        </select>
+        <div className="space-y-2 pt-1 max-h-48 overflow-y-auto">
+          {brands.filter(b => b !== 'Muu').map(b => {
+            const selected = (filters.brands || []).includes(b)
+            return (
+              <label key={b} className="flex items-center gap-2.5 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={selected}
+                  onChange={() => {
+                    const cur = filters.brands || []
+                    const next = selected ? cur.filter(v => v !== b) : [...cur, b]
+                    set('brands', next.length ? next : undefined)
+                  }}
+                />
+                <span className="text-sm text-muted-light group-hover:text-white transition-colors">{b}</span>
+              </label>
+            )
+          })}
+          {/* Muu - alati kõige all */}
+          <label className="flex items-center gap-2.5 cursor-pointer group border-t border-surface-border pt-2 mt-1">
+            <input
+              type="checkbox"
+              checked={(filters.brands || []).includes('Muu')}
+              onChange={() => {
+                const cur = filters.brands || []
+                const hasMuu = cur.includes('Muu')
+                const next = hasMuu ? cur.filter(v => v !== 'Muu') : [...cur, 'Muu']
+                onChange({ ...filters, brands: next.length ? next : undefined, custom_brand: hasMuu ? undefined : filters.custom_brand, page: 0 })
+              }}
+            />
+            <span className="text-sm text-muted-light group-hover:text-white transition-colors">Muu</span>
+          </label>
+          {(filters.brands || []).includes('Muu') && (
+            <input
+              type="text"
+              placeholder="Kirjuta margi nimi..."
+              value={filters.custom_brand || ''}
+              onChange={e => onChange({ ...filters, custom_brand: e.target.value || undefined, page: 0 })}
+              className="input text-sm mt-1"
+            />
+          )}
+        </div>
       </FilterSection>
 
       {/* Hind */}
@@ -122,7 +156,10 @@ export default function Filters({ filters, onChange }) {
 
       {/* Läbisõit */}
       <FilterSection title="Läbisõit (km)" open={open.mileage} toggle={() => toggle('mileage')}>
-        <input type="number" placeholder="Kuni km" value={filters.mileage_to || ''} onChange={e => set('mileage_to', e.target.value || undefined)} className="input text-sm mt-1" />
+        <div className="flex gap-2 mt-1">
+          <input type="number" placeholder="Alates" value={filters.mileage_from || ''} onChange={e => set('mileage_from', e.target.value || undefined)} className="input text-sm w-1/2" />
+          <input type="number" placeholder="Kuni" value={filters.mileage_to || ''} onChange={e => set('mileage_to', e.target.value || undefined)} className="input text-sm w-1/2" />
+        </div>
       </FilterSection>
 
       {/* Seisund */}
@@ -147,10 +184,25 @@ export default function Filters({ filters, onChange }) {
 
       {/* Maakond */}
       <FilterSection title="Maakond" open={open.county} toggle={() => toggle('county')}>
-        <select value={filters.county || ''} onChange={e => set('county', e.target.value || undefined)} className="input text-sm mt-1">
-          <option value="">Kõik maakonnad</option>
-          {COUNTIES.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
+        <div className="space-y-2 pt-1 max-h-48 overflow-y-auto">
+          {COUNTIES.map(c => {
+            const selected = (filters.counties || []).includes(c)
+            return (
+              <label key={c} className="flex items-center gap-2.5 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={selected}
+                  onChange={() => {
+                    const cur = filters.counties || []
+                    const next = selected ? cur.filter(v => v !== c) : [...cur, c]
+                    set('counties', next.length ? next : undefined)
+                  }}
+                />
+                <span className="text-sm text-muted-light group-hover:text-white transition-colors">{c}</span>
+              </label>
+            )
+          })}
+        </div>
       </FilterSection>
     </div>
   )

@@ -1,7 +1,8 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Zap, Menu, X, User, LogOut, Plus } from 'lucide-react'
+import { Menu, X, User, LogOut, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../../hooks/useAuth'
+import logoImg from '/logo.png'
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -23,13 +24,10 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group flex-shrink-0">
-            <div className="bg-primary-600 rounded-lg p-1.5 group-hover:bg-primary-500 transition-colors shadow-sm">
-              <Zap className="w-5 h-5 text-white fill-white" />
-            </div>
+            <img src={logoImg} alt="elektriliikur.ee" className="w-10 h-10 group-hover:scale-105 transition-transform" />
             <div className="leading-none">
-              <span className="font-black text-white text-lg tracking-tight">elektri</span>
-              <span className="font-black text-primary-500 text-lg tracking-tight">liikur</span>
-              <span className="font-black text-muted text-lg tracking-tight">.ee</span>
+              <span className="font-black text-primary-500 text-lg tracking-tight">elektri</span>
+              <span className="font-black text-white text-lg tracking-tight">liikur.ee</span>
             </div>
           </Link>
 

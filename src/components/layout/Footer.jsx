@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Zap, Mail } from 'lucide-react'
+import { Mail } from 'lucide-react'
+import logoImg from '/logo.png'
 
 export default function Footer() {
   return (
@@ -10,13 +11,10 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="bg-primary-600 rounded-lg p-1.5">
-                <Zap className="w-5 h-5 text-white fill-white" />
-              </div>
+              <img src={logoImg} alt="elektriliikur.ee" className="w-10 h-10" />
               <div className="leading-none">
-                <span className="font-black text-white text-lg tracking-tight">elektri</span>
-                <span className="font-black text-primary-500 text-lg tracking-tight">liikur</span>
-                <span className="font-black text-muted text-lg tracking-tight">.ee</span>
+                <span className="font-black text-primary-500 text-lg tracking-tight">elektri</span>
+                <span className="font-black text-white text-lg tracking-tight">liikur.ee</span>
               </div>
             </Link>
             <p className="text-sm text-muted leading-relaxed mb-4 max-w-xs">

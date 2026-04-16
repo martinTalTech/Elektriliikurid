@@ -34,13 +34,10 @@ export default function Login() {
       <div className="w-full max-w-md relative">
         <div className="text-center mb-8 animate-fade-in-up">
           <Link to="/" className="inline-flex items-center gap-2 mb-4">
-            <div className="bg-primary-600 rounded-lg p-1.5">
-              <Zap className="w-5 h-5 text-white fill-white" />
-            </div>
+            <img src="/logo.png" alt="elektriliikur.ee" className="w-10 h-10" />
             <div className="leading-none">
-              <span className="font-black text-white text-xl tracking-tight">elektri</span>
-              <span className="font-black text-primary-500 text-xl tracking-tight">liikur</span>
-              <span className="font-black text-muted text-xl tracking-tight">.ee</span>
+              <span className="font-black text-primary-500 text-xl tracking-tight">elektri</span>
+              <span className="font-black text-white text-xl tracking-tight">liikur.ee</span>
             </div>
           </Link>
           <h1 className="text-2xl font-black text-white mt-2">Logi sisse</h1>
