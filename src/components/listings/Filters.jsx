@@ -8,8 +8,8 @@ const YEARS = Array.from({ length: CURRENT_YEAR - 1999 }, (_, i) => CURRENT_YEAR
 
 const PRICE_OPTIONS = [0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 6000, 7000, 8000, 9000, 10000]
 
-const MILEAGE_FROM_OPTIONS = [0, 100, 500, 1000, 2000, 5000, 10000, 20000, 50000]
-const MILEAGE_TO_OPTIONS   = [100, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000]
+const MILEAGE_FROM_OPTIONS = [0, 100, 500, 1000, 2000, 5000, 10000, 20000]
+const MILEAGE_TO_OPTIONS   = [100, 500, 1000, 2000, 5000, 10000, 20000]
 
 export default function Filters({ filters, onChange }) {
   const [open, setOpen] = useState({ listing_type: true, type: true, price: true, year: true, mileage: true })
@@ -145,7 +145,7 @@ export default function Filters({ filters, onChange }) {
           </select>
           <select value={filters.mileage_to || ''} onChange={e => set('mileage_to', e.target.value || undefined)} className="input text-sm w-1/2">
             <option value="">Kuni</option>
-            {MILEAGE_TO_OPTIONS.map(m => <option key={m} value={m}>{m === 100000 ? '100 000+ km' : `${m.toLocaleString('et')} km`}</option>)}
+            {MILEAGE_TO_OPTIONS.map(m => <option key={m} value={m}>{m === 20000 ? '20 000+ km' : `${m.toLocaleString('et')} km`}</option>)}
           </select>
         </div>
       </FilterSection>
