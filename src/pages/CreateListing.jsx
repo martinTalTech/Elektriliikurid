@@ -6,6 +6,7 @@ import VehicleIcon from '../components/VehicleIcon'
 import { useAuth } from '../hooks/useAuth'
 import { BRANDS_BY_TYPE, VEHICLE_TYPES, CONDITIONS } from '../constants/brands'
 import { COUNTIES } from '../constants/counties'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 const STEPS = ['Sõiduki andmed', 'Tehniline info', 'Kirjeldus & pildid', 'Hind & asukoht', 'Avalda']
 
@@ -25,6 +26,7 @@ const AUCTION_DURATIONS = [
 ]
 
 export default function CreateListing() {
+  usePageTitle('Lisa kuulutus')
   const { user } = useAuth()
   const navigate = useNavigate()
   const [step, setStep] = useState(0)

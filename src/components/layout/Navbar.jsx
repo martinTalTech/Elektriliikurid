@@ -78,6 +78,9 @@ export default function Navbar() {
                 <Link to="/logi-sisse" className="btn btn-secondary text-sm">
                   Logi sisse
                 </Link>
+                <Link to="/registreeru" className="btn btn-secondary text-sm border-primary-600/50 text-primary-400 hover:bg-primary-600/10">
+                  Registreeru
+                </Link>
                 <Link to="/lisa-kuulutus" className="btn btn-primary text-sm gap-1.5">
                   <Plus className="w-4 h-4" /> Lisa kuulutus
                 </Link>
@@ -123,9 +126,14 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <Link to="/logi-sisse" className="btn btn-secondary w-full" onClick={() => setMobileOpen(false)}>
-                Logi sisse
-              </Link>
+              <>
+                <Link to="/logi-sisse" className="btn btn-secondary w-full" onClick={() => setMobileOpen(false)}>
+                  Logi sisse
+                </Link>
+                <Link to="/registreeru" className="btn btn-secondary w-full border-primary-600/50 text-primary-400 hover:bg-primary-600/10" onClick={() => setMobileOpen(false)}>
+                  Registreeru
+                </Link>
+              </>
             )}
             <Link to="/lisa-kuulutus" className="btn btn-primary w-full" onClick={() => setMobileOpen(false)}>
               <Plus className="w-4 h-4 mr-1.5" /> Lisa kuulutus

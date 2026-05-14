@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { Search, Zap, TrendingUp, ShieldCheck, ArrowRight, X, ClipboardList, Handshake, Banknote, Key, Gavel, Check } from 'lucide-react'
 import { useListings } from '../hooks/useListings'
+import { usePageTitle } from '../hooks/usePageTitle'
 import ListingGrid from '../components/listings/ListingGrid'
 import VehicleIcon from '../components/VehicleIcon'
 import { COUNTIES } from '../constants/counties'
@@ -17,6 +18,7 @@ const CATEGORIES = [
 ]
 
 export default function Home() {
+  usePageTitle('Avaleht')
   const navigate = useNavigate()
   const location = useLocation()
   const [selectedTypes, setSelectedTypes] = useState([])

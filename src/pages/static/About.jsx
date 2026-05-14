@@ -1,6 +1,8 @@
 import { Zap } from 'lucide-react'
+import { usePageTitle } from '../../hooks/usePageTitle'
 
 export default function About() {
+  usePageTitle('Meist')
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       <div className="text-center mb-10">

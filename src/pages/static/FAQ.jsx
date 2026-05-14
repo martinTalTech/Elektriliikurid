@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
+import { usePageTitle } from '../../hooks/usePageTitle'
 
 const FAQS = [
   { q: 'Kuidas lisada kuulutus?', a: 'Kliki "Lisa kuulutus" nupul, registreeru või logi sisse, täida mitmeastmeline vorm ja tasu väike avaldamistasu Stripe kaudu.' },
@@ -11,6 +12,7 @@ const FAQS = [
 ]
 
 export default function FAQ() {
+  usePageTitle('KKK')
   const [open, setOpen] = useState(null)
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
