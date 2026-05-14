@@ -3,6 +3,14 @@ import { ChevronDown, X } from 'lucide-react'
 import { BRANDS_BY_TYPE, VEHICLE_TYPES, CONDITIONS } from '../../constants/brands'
 import { COUNTIES } from '../../constants/counties'
 
+const CURRENT_YEAR = new Date().getFullYear()
+const YEARS = Array.from({ length: CURRENT_YEAR - 1999 }, (_, i) => CURRENT_YEAR - i)
+
+const PRICE_OPTIONS = [0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 6000, 7000, 8000, 9000, 10000]
+
+const MILEAGE_FROM_OPTIONS = [0, 100, 500, 1000, 2000, 5000, 10000, 20000, 50000]
+const MILEAGE_TO_OPTIONS   = [100, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000]
+
 export default function Filters({ filters, onChange }) {
   const [open, setOpen] = useState({ listing_type: true, type: true, price: true, year: true, mileage: true })
 
@@ -103,24 +111,42 @@ export default function Filters({ filters, onChange }) {
       {/* Hind */}
       <FilterSection title="Hind (€)" open={open.price} toggle={() => toggle('price')}>
         <div className="flex gap-2 mt-1">
-          <input type="number" min="0" placeholder="Alates" value={filters.price_from || ''} onChange={e => set('price_from', e.target.value || undefined)} className="input text-sm w-1/2" />
-          <input type="number" min="0" placeholder="Kuni" value={filters.price_to || ''} onChange={e => set('price_to', e.target.value || undefined)} className="input text-sm w-1/2" />
+          <select value={filters.price_from || ''} onChange={e => set('price_from', e.target.value || undefined)} className="input text-sm w-1/2">
+            <option value="">Alates</option>
+            {PRICE_OPTIONS.map(p => <option key={p} value={p}>{p === 0 ? '0 €' : `${p.toLocaleString('et')} €`}</option>)}
+          </select>
+          <select value={filters.price_to || ''} onChange={e => set('price_to', e.target.value || undefined)} className="input text-sm w-1/2">
+            <option value="">Kuni</option>
+            {PRICE_OPTIONS.filter(p => p > 0).map(p => <option key={p} value={p}>{p === 10000 ? '10 000+ €' : `${p.toLocaleString('et')} €`}</option>)}
+          </select>
         </div>
       </FilterSection>
 
       {/* Aastakäik */}
       <FilterSection title="Aastakäik" open={open.year} toggle={() => toggle('year')}>
         <div className="flex gap-2 mt-1">
-          <input type="number" placeholder="Alates" min="2015" max={new Date().getFullYear()} value={filters.year_from || ''} onChange={e => set('year_from', e.target.value || undefined)} className="input text-sm w-1/2" />
-          <input type="number" placeholder="Kuni" min="2015" max={new Date().getFullYear()} value={filters.year_to || ''} onChange={e => set('year_to', e.target.value || undefined)} className="input text-sm w-1/2" />
+          <select value={filters.year_from || ''} onChange={e => set('year_from', e.target.value || undefined)} className="input text-sm w-1/2">
+            <option value="">Alates</option>
+            {YEARS.slice().reverse().map(y => <option key={y} value={y}>{y}</option>)}
+          </select>
+          <select value={filters.year_to || ''} onChange={e => set('year_to', e.target.value || undefined)} className="input text-sm w-1/2">
+            <option value="">Kuni</option>
+            {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+          </select>
         </div>
       </FilterSection>
 
       {/* Läbisõit */}
       <FilterSection title="Läbisõit (km)" open={open.mileage} toggle={() => toggle('mileage')}>
         <div className="flex gap-2 mt-1">
-          <input type="number" min="0" placeholder="Alates" value={filters.mileage_from || ''} onChange={e => set('mileage_from', e.target.value || undefined)} className="input text-sm w-1/2" />
-          <input type="number" min="0" placeholder="Kuni" value={filters.mileage_to || ''} onChange={e => set('mileage_to', e.target.value || undefined)} className="input text-sm w-1/2" />
+          <select value={filters.mileage_from || ''} onChange={e => set('mileage_from', e.target.value || undefined)} className="input text-sm w-1/2">
+            <option value="">Alates</option>
+            {MILEAGE_FROM_OPTIONS.map(m => <option key={m} value={m}>{m.toLocaleString('et')} km</option>)}
+          </select>
+          <select value={filters.mileage_to || ''} onChange={e => set('mileage_to', e.target.value || undefined)} className="input text-sm w-1/2">
+            <option value="">Kuni</option>
+            {MILEAGE_TO_OPTIONS.map(m => <option key={m} value={m}>{m === 100000 ? '100 000+ km' : `${m.toLocaleString('et')} km`}</option>)}
+          </select>
         </div>
       </FilterSection>
 
