@@ -103,16 +103,16 @@ export default function Filters({ filters, onChange }) {
       {/* Hind */}
       <FilterSection title="Hind (€)" open={open.price} toggle={() => toggle('price')}>
         <div className="flex gap-2 mt-1">
-          <input type="number" placeholder="Alates" value={filters.price_from || ''} onChange={e => set('price_from', e.target.value || undefined)} className="input text-sm w-1/2" />
-          <input type="number" placeholder="Kuni" value={filters.price_to || ''} onChange={e => set('price_to', e.target.value || undefined)} className="input text-sm w-1/2" />
+          <input type="number" min="0" placeholder="Alates" value={filters.price_from || ''} onChange={e => set('price_from', e.target.value || undefined)} className="input text-sm w-1/2" />
+          <input type="number" min="0" placeholder="Kuni" value={filters.price_to || ''} onChange={e => set('price_to', e.target.value || undefined)} className="input text-sm w-1/2" />
         </div>
       </FilterSection>
 
       {/* Aastakäik */}
       <FilterSection title="Aastakäik" open={open.year} toggle={() => toggle('year')}>
         <div className="flex gap-2 mt-1">
-          <input type="number" placeholder="Alates" min="2015" max="2025" value={filters.year_from || ''} onChange={e => set('year_from', e.target.value || undefined)} className="input text-sm w-1/2" />
-          <input type="number" placeholder="Kuni" min="2015" max="2025" value={filters.year_to || ''} onChange={e => set('year_to', e.target.value || undefined)} className="input text-sm w-1/2" />
+          <input type="number" placeholder="Alates" min="2015" max={new Date().getFullYear()} value={filters.year_from || ''} onChange={e => set('year_from', e.target.value || undefined)} className="input text-sm w-1/2" />
+          <input type="number" placeholder="Kuni" min="2015" max={new Date().getFullYear()} value={filters.year_to || ''} onChange={e => set('year_to', e.target.value || undefined)} className="input text-sm w-1/2" />
         </div>
       </FilterSection>
 
