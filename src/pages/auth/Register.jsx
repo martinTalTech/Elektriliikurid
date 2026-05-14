@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Zap, Mail, Lock, User, Phone, Eye, EyeOff, Check, X } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { usePageTitle } from '../../hooks/usePageTitle'
 
 function getPasswordStrength(pw) {
   const checks = {
@@ -23,6 +24,7 @@ function isValidPhone(phone) {
 }
 
 export default function Register() {
+  usePageTitle('Registreeru')
   const navigate = useNavigate()
   const [form, setForm] = useState({ email: '', password: '', name: '', phone: '' })
   const [loading, setLoading] = useState(false)
@@ -60,15 +62,25 @@ export default function Register() {
     const { data, error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
-      options: { data: { name: form.name, phone: form.phone } }
+      options: {
+        data: { name: form.name, phone: form.phone },
+        emailRedirectTo: `${window.location.origin}/#/logi-sisse`,
+      }
     })
     if (error) {
       // Ära näita Supabase sisemisi veateateid kasutajale
-      if (error.message?.toLowerCase().includes('already registered')) {
-        setError('See e-posti aadress on juba registreeritud.')
+      if (error.message?.toLowerCase().includes('already registered') || error.message?.toLowerCase().includes('already exists')) {
+        setError('See e-posti aadress on juba registreeritud. Proovi sisse logida.')
+      } else if (error.message?.toLowerCase().includes('rate limit')) {
+        setError('Liiga palju katseid. Proovi paari minuti pärast uuesti.')
       } else {
         setError('Registreerimine ebaõnnestus. Kontrolli andmeid ja proovi uuesti.')
       }
+      setLoading(false)
+    } else if (data?.user && data.user.identities && data.user.identities.length === 0) {
+      // Supabase turvameede: tagastab "eduka" vastuse kui email on juba olemas.
+      // Tuvastame selle identities massiivi järgi.
+      setError('See e-posti aadress on juba registreeritud. Proovi sisse logida.')
       setLoading(false)
     } else {
       setSuccess(true)

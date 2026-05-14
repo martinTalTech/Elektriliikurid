@@ -4,8 +4,10 @@ import { SlidersHorizontal, X } from 'lucide-react'
 import { useListings } from '../hooks/useListings'
 import ListingGrid from '../components/listings/ListingGrid'
 import Filters from '../components/listings/Filters'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 export default function Listings() {
+  usePageTitle('Kuulutused')
   const [searchParams] = useSearchParams()
   const [showFilters, setShowFilters] = useState(false)
   const initTypes = searchParams.getAll('type').filter(Boolean)

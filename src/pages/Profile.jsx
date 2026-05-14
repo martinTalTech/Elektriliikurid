@@ -5,8 +5,10 @@ import { supabase } from '../lib/supabase'
 import { formatPrice, formatDate } from '../utils/format'
 import { Plus, Trash2, ClipboardList, User, Mail, Calendar, Settings, LogOut } from 'lucide-react'
 import VehicleIcon from '../components/VehicleIcon'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 export default function Profile() {
+  usePageTitle('Minu profiil')
   const { user } = useAuth()
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)

@@ -7,12 +7,14 @@ import { useAuth } from '../hooks/useAuth'
 import { formatPrice, formatDate, getConditionLabel } from '../utils/format'
 import ListingGrid from '../components/listings/ListingGrid'
 import { useListings } from '../hooks/useListings'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 export default function ListingDetail() {
   const { id } = useParams()
   const { user } = useAuth()
   const [listing, setListing] = useState(null)
   const [loading, setLoading] = useState(true)
+  usePageTitle(listing ? listing.title : 'Kuulutus')
   const [activeImg, setActiveImg] = useState(0)
   const [showContact, setShowContact] = useState(false)
   const { listings: similar } = useListings({ limit: 4 })

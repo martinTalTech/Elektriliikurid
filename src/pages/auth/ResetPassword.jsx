@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Lock, Eye, EyeOff, Check, X } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { usePageTitle } from '../../hooks/usePageTitle'
 
 const getPasswordStrength = (pw) => {
   let score = 0
@@ -17,6 +18,7 @@ const strengthColors = ['', 'bg-red-500', 'bg-yellow-500', 'bg-blue-500', 'bg-gr
 const strengthTextColors = ['', 'text-red-400', 'text-yellow-400', 'text-blue-400', 'text-green-400']
 
 export default function ResetPassword() {
+  usePageTitle('Uus parool')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)

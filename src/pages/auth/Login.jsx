@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Zap, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { usePageTitle } from '../../hooks/usePageTitle'
 
 export default function Login() {
+  usePageTitle('Logi sisse')
   const navigate = useNavigate()
   const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)

@@ -65,7 +65,7 @@ export default function Footer() {
 
       <div className="border-t border-surface-border py-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted">
-          <span>&copy; {new Date().getFullYear()} elektriliikurid.ee &mdash; Kõik õigused kaitstud</span>
+          <span>&copy; {new Date().getFullYear()} elektriliikur.ee &mdash; Kõik õigused kaitstud</span>
           <div className="flex gap-4">
             <Link to="/tingimused" className="hover:text-white transition-colors">Tingimused</Link>
             <Link to="/privaatsus" className="hover:text-white transition-colors">Privaatsus</Link>

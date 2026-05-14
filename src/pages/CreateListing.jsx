@@ -6,6 +6,7 @@ import VehicleIcon from '../components/VehicleIcon'
 import { useAuth } from '../hooks/useAuth'
 import { BRANDS_BY_TYPE, MODELS_BY_BRAND, VEHICLE_TYPES, CONDITIONS } from '../constants/brands'
 import { COUNTIES } from '../constants/counties'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 const STEPS = ['Sõiduki andmed', 'Tehniline info', 'Kirjeldus & pildid', 'Hind & asukoht', 'Avalda']
 
@@ -18,6 +19,7 @@ const PLANS = [
 const PLAN_PRICES = { basic: '2.99€', standard: '4.99€', premium: '9.99€' }
 
 export default function CreateListing() {
+  usePageTitle('Lisa kuulutus')
   const { user } = useAuth()
   const navigate = useNavigate()
   const [step, setStep] = useState(0)

@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Mail } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { usePageTitle } from '../../hooks/usePageTitle'
 
 export default function ForgotPassword() {
+  usePageTitle('Unustasid parooli?')
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
