@@ -11,7 +11,8 @@ export default function Privacy() {
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">1. Vastutav töötleja</h2>
           <p>
-            Vastutav töötleja on elektriliikurid.ee (edaspidi "Platvorm").<br />
+            Vastutav töötleja on <strong className="text-white">Nevicus OÜ</strong>, kes haldab platvormi elektriliikur.ee.<br />
+            Aadress: Vabaduse pst 164-4, Nõmme linnaosa, Tallinn, Harju maakond, 10917<br />
             Kontakt: <a href="mailto:info@elektriliikur.ee" className="text-primary-400 hover:text-primary-300">info@elektriliikur.ee</a>
           </p>
         </section>
