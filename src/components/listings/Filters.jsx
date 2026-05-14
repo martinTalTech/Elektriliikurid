@@ -119,8 +119,8 @@ export default function Filters({ filters, onChange }) {
       {/* Läbisõit */}
       <FilterSection title="Läbisõit (km)" open={open.mileage} toggle={() => toggle('mileage')}>
         <div className="flex gap-2 mt-1">
-          <input type="number" placeholder="Alates" value={filters.mileage_from || ''} onChange={e => set('mileage_from', e.target.value || undefined)} className="input text-sm w-1/2" />
-          <input type="number" placeholder="Kuni" value={filters.mileage_to || ''} onChange={e => set('mileage_to', e.target.value || undefined)} className="input text-sm w-1/2" />
+          <input type="number" min="0" placeholder="Alates" value={filters.mileage_from || ''} onChange={e => set('mileage_from', e.target.value || undefined)} className="input text-sm w-1/2" />
+          <input type="number" min="0" placeholder="Kuni" value={filters.mileage_to || ''} onChange={e => set('mileage_to', e.target.value || undefined)} className="input text-sm w-1/2" />
         </div>
       </FilterSection>
 
