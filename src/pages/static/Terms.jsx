@@ -16,6 +16,7 @@ export default function Terms() {
           <ul className="space-y-1 ml-2">
             <li><strong className="text-white">Ettevõte:</strong> Nevicus OÜ</li>
             <li><strong className="text-white">Aadress:</strong> Vabaduse pst 164-4, Nõmme linnaosa, Tallinn, Harju maakond, 10917</li>
+            <li><strong className="text-white">Telefon:</strong> <a href="tel:+3725181108" className="text-primary-400 hover:text-primary-300">+372 518 1108</a></li>
             <li><strong className="text-white">E-post:</strong> <a href="mailto:info@elektriliikur.ee" className="text-primary-400 hover:text-primary-300">info@elektriliikur.ee</a></li>
           </ul>
         </section>

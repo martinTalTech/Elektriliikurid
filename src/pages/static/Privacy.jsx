@@ -13,6 +13,7 @@ export default function Privacy() {
           <p>
             Vastutav töötleja on <strong className="text-white">Nevicus OÜ</strong>, kes haldab platvormi elektriliikur.ee.<br />
             Aadress: Vabaduse pst 164-4, Nõmme linnaosa, Tallinn, Harju maakond, 10917<br />
+            Telefon: <a href="tel:+3725181108" className="text-primary-400 hover:text-primary-300">+372 518 1108</a><br />
             Kontakt: <a href="mailto:info@elektriliikur.ee" className="text-primary-400 hover:text-primary-300">info@elektriliikur.ee</a>
           </p>
         </section>

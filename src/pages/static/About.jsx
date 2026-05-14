@@ -36,6 +36,10 @@ export default function About() {
               <span>Vabaduse pst 164-4, Nõmme linnaosa, Tallinn, Harju maakond, 10917</span>
             </div>
             <div className="flex items-center gap-2">
+              <Phone className="w-4 h-4 text-primary-500 flex-shrink-0" />
+              <a href="tel:+3725181108" className="text-primary-400 hover:text-primary-300">+372 518 1108</a>
+            </div>
+            <div className="flex items-center gap-2">
               <Mail className="w-4 h-4 text-primary-500 flex-shrink-0" />
               <a href="mailto:info@elektriliikur.ee" className="text-primary-400 hover:text-primary-300">info@elektriliikur.ee</a>
             </div>
