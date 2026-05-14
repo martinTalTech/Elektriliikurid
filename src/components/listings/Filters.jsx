@@ -4,13 +4,18 @@ import { BRANDS_BY_TYPE, VEHICLE_TYPES, CONDITIONS } from '../../constants/brand
 import { COUNTIES } from '../../constants/counties'
 
 export default function Filters({ filters, onChange }) {
-  const [open, setOpen] = useState({ listing_type: true, type: true, price: true })
+  const [open, setOpen] = useState({ listing_type: true, type: true, price: true, year: true, mileage: true })
 
   const selectedTypes = filters.vehicle_types || []
   const brands = selectedTypes.length === 1 ? (BRANDS_BY_TYPE[selectedTypes[0]] || []) : []
 
   const toggle = (key) => setOpen(prev => ({ ...prev, [key]: !prev[key] }))
   const set = (key, val) => onChange({ ...filters, [key]: val, page: 0 })
+
+  const toggleListingType = (val) => {
+    const cur = filters.listing_types || []
+    set('listing_types', cur.includes(val) ? cur.filter(v => v !== val) : [...cur, val])
+  }
 
   const toggleVehicleType = (val) => {
     const cur = filters.vehicle_types || []
@@ -44,21 +49,19 @@ export default function Filters({ filters, onChange }) {
       <FilterSection title="Kuulutuse liik" open={open.listing_type} toggle={() => toggle('listing_type')}>
         <div className="space-y-2 pt-1">
           {[
-            { value: '',        label: 'Kõik',         color: 'text-muted-light' },
-            { value: 'sale',    label: '💰 Müük',      color: 'text-green-400' },
-            { value: 'rent',    label: '🔑 Rent',      color: 'text-blue-400' },
-            { value: 'auction', label: '🔨 Oksjon',    color: 'text-orange-400' },
-            { value: 'wanted',  label: '🔍 Otsitakse', color: 'text-purple-400' },
+            { value: 'sale',    label: 'Müük' },
+            { value: 'rent',    label: 'Rent' },
+            { value: 'auction', label: 'Oksjon' },
+            { value: 'wanted',  label: 'Otsitakse' },
           ].map(opt => (
             <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
               <input
-                type="radio"
-                name="listing_type"
+                type="checkbox"
                 value={opt.value}
-                checked={(filters.listing_type || '') === opt.value}
-                onChange={() => set('listing_type', opt.value || undefined)}
+                checked={(filters.listing_types || []).includes(opt.value)}
+                onChange={() => toggleListingType(opt.value)}
               />
-              <span className={`text-sm group-hover:text-white transition-colors ${opt.color}`}>{opt.label}</span>
+              <span className="text-sm text-muted-light group-hover:text-white transition-colors">{opt.label}</span>
             </label>
           ))}
         </div>
@@ -115,7 +118,10 @@ export default function Filters({ filters, onChange }) {
 
       {/* Läbisõit */}
       <FilterSection title="Läbisõit (km)" open={open.mileage} toggle={() => toggle('mileage')}>
-        <input type="number" placeholder="Kuni km" value={filters.mileage_to || ''} onChange={e => set('mileage_to', e.target.value || undefined)} className="input text-sm mt-1" />
+        <div className="flex gap-2 mt-1">
+          <input type="number" placeholder="Alates" value={filters.mileage_from || ''} onChange={e => set('mileage_from', e.target.value || undefined)} className="input text-sm w-1/2" />
+          <input type="number" placeholder="Kuni" value={filters.mileage_to || ''} onChange={e => set('mileage_to', e.target.value || undefined)} className="input text-sm w-1/2" />
+        </div>
       </FilterSection>
 
       {/* Seisund */}
