@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { supabase } from '../lib/supabase'
 import { formatPrice, formatDate } from '../utils/format'
-import { Plus, Trash2, ClipboardList, User, Mail, Calendar, Settings, LogOut } from 'lucide-react'
+import { Plus, Trash2, Eye, ClipboardList, User, Mail, Calendar, Settings, LogOut } from 'lucide-react'
 import VehicleIcon from '../components/VehicleIcon'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { Plus, Trash2, Eye, User } from 'lucide-react'
 import { VEHICLE_TYPES } from '../constants/brands'
 
 export default function Profile() {
