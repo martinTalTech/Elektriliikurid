@@ -1,24 +1,30 @@
 import { useState } from 'react'
 import { ChevronDown, X } from 'lucide-react'
-import { SCOOTER_BRANDS, CROSS_BRANDS, MOPED_BRANDS, EBIKE_BRANDS, RULA_BRANDS, MONO_BRANDS, CONDITIONS } from '../../constants/brands'
+import { BRANDS_BY_TYPE, VEHICLE_TYPES, CONDITIONS } from '../../constants/brands'
 import { COUNTIES } from '../../constants/counties'
 
 export default function Filters({ filters, onChange }) {
   const [open, setOpen] = useState({ listing_type: true, type: true, price: true })
 
-  const brandMap = { scooter: SCOOTER_BRANDS, cross: CROSS_BRANDS, mopeed: MOPED_BRANDS, jalgratas: EBIKE_BRANDS, rula: RULA_BRANDS, monoratas: MONO_BRANDS }
   const selectedTypes = filters.vehicle_types || []
-  const brands = selectedTypes.length === 1
-    ? brandMap[selectedTypes[0]] || SCOOTER_BRANDS
-    : [...new Set(Object.values(brandMap).flat())].sort()
+  const brands = selectedTypes.length === 1 ? (BRANDS_BY_TYPE[selectedTypes[0]] || []) : []
 
   const toggle = (key) => setOpen(prev => ({ ...prev, [key]: !prev[key] }))
   const set = (key, val) => onChange({ ...filters, [key]: val, page: 0 })
 
-  const activeCount = Object.entries(filters).reduce((sum, [k, v]) => {
-    if (['page', 'sort', 'limit'].includes(k) || !v) return sum
-    return sum + (Array.isArray(v) ? v.length : 1)
-  }, 0)
+  const toggleVehicleType = (val) => {
+    const cur = filters.vehicle_types || []
+    set('vehicle_types', cur.includes(val) ? cur.filter(v => v !== val) : [...cur, val])
+  }
+
+  const toggleCounty = (val) => {
+    const cur = filters.counties || []
+    set('counties', cur.includes(val) ? cur.filter(v => v !== val) : [...cur, val])
+  }
+
+  const activeCount = Object.entries(filters).filter(([k, v]) =>
+    !['page', 'sort', 'limit'].includes(k) && v && (Array.isArray(v) ? v.length : true)
+  ).length
 
   return (
     <div className="space-y-1">
@@ -38,105 +44,58 @@ export default function Filters({ filters, onChange }) {
       <FilterSection title="Kuulutuse liik" open={open.listing_type} toggle={() => toggle('listing_type')}>
         <div className="space-y-2 pt-1">
           {[
-            { value: 'sale', label: 'Müük' },
-            { value: 'rent', label: 'Rent' },
-            { value: 'auction', label: 'Oksjon' },
-            { value: 'wanted', label: 'Otsitakse' },
-          ].map(opt => {
-            const selected = (filters.listing_types || []).includes(opt.value)
-            return (
-              <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={selected}
-                  onChange={() => {
-                    const cur = filters.listing_types || []
-                    const next = selected ? cur.filter(v => v !== opt.value) : [...cur, opt.value]
-                    set('listing_types', next.length ? next : undefined)
-                  }}
-                />
-                <span className="text-sm text-muted-light group-hover:text-white transition-colors">{opt.label}</span>
-              </label>
-            )
-          })}
+            { value: '',        label: 'Kõik',         color: 'text-muted-light' },
+            { value: 'sale',    label: '💰 Müük',      color: 'text-green-400' },
+            { value: 'rent',    label: '🔑 Rent',      color: 'text-blue-400' },
+            { value: 'auction', label: '🔨 Oksjon',    color: 'text-orange-400' },
+            { value: 'wanted',  label: '🔍 Otsitakse', color: 'text-purple-400' },
+          ].map(opt => (
+            <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
+              <input
+                type="radio"
+                name="listing_type"
+                value={opt.value}
+                checked={(filters.listing_type || '') === opt.value}
+                onChange={() => set('listing_type', opt.value || undefined)}
+              />
+              <span className={`text-sm group-hover:text-white transition-colors ${opt.color}`}>{opt.label}</span>
+            </label>
+          ))}
         </div>
       </FilterSection>
 
-      {/* Tüüp */}
+      {/* Sõiduki tüüp — multi-select checkboxid */}
       <FilterSection title="Sõiduki tüüp" open={open.type} toggle={() => toggle('type')}>
         <div className="space-y-2 pt-1">
-          {[
-            { value: 'scooter', label: 'Elektri tõukeratas' },
-            { value: 'cross', label: 'Elektri krossikas' },
-            { value: 'mopeed', label: 'Elektri mopeed' },
-            { value: 'jalgratas', label: 'Elektri jalgratas' },
-            { value: 'rula', label: 'Elektri rula' },
-            { value: 'monoratas', label: 'Monoratas' },
-          ].map(opt => {
-            const selected = (filters.vehicle_types || []).includes(opt.value)
-            return (
-              <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={selected}
-                  onChange={() => {
-                    const cur = filters.vehicle_types || []
-                    const next = selected ? cur.filter(v => v !== opt.value) : [...cur, opt.value]
-                    set('vehicle_types', next.length ? next : undefined)
-                  }}
-                />
-                <span className="text-sm text-muted-light group-hover:text-white transition-colors">{opt.label}</span>
-              </label>
-            )
-          })}
+          {VEHICLE_TYPES.map(t => (
+            <label key={t.value} className="flex items-center gap-2.5 cursor-pointer group">
+              <input
+                type="checkbox"
+                value={t.value}
+                checked={selectedTypes.includes(t.value)}
+                onChange={() => toggleVehicleType(t.value)}
+              />
+              <span className="text-sm text-muted-light group-hover:text-white transition-colors">
+                {t.icon} {t.label}
+              </span>
+            </label>
+          ))}
         </div>
       </FilterSection>
 
-      {/* Mark */}
-      <FilterSection title="Mark" open={open.brand} toggle={() => toggle('brand')}>
-        <div className="space-y-2 pt-1 max-h-48 overflow-y-auto">
-          {brands.filter(b => b !== 'Muu').map(b => {
-            const selected = (filters.brands || []).includes(b)
-            return (
-              <label key={b} className="flex items-center gap-2.5 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={selected}
-                  onChange={() => {
-                    const cur = filters.brands || []
-                    const next = selected ? cur.filter(v => v !== b) : [...cur, b]
-                    set('brands', next.length ? next : undefined)
-                  }}
-                />
-                <span className="text-sm text-muted-light group-hover:text-white transition-colors">{b}</span>
-              </label>
-            )
-          })}
-          {/* Muu - alati kõige all */}
-          <label className="flex items-center gap-2.5 cursor-pointer group border-t border-surface-border pt-2 mt-1">
-            <input
-              type="checkbox"
-              checked={(filters.brands || []).includes('Muu')}
-              onChange={() => {
-                const cur = filters.brands || []
-                const hasMuu = cur.includes('Muu')
-                const next = hasMuu ? cur.filter(v => v !== 'Muu') : [...cur, 'Muu']
-                onChange({ ...filters, brands: next.length ? next : undefined, custom_brand: hasMuu ? undefined : filters.custom_brand, page: 0 })
-              }}
-            />
-            <span className="text-sm text-muted-light group-hover:text-white transition-colors">Muu</span>
-          </label>
-          {(filters.brands || []).includes('Muu') && (
-            <input
-              type="text"
-              placeholder="Kirjuta margi nimi..."
-              value={filters.custom_brand || ''}
-              onChange={e => onChange({ ...filters, custom_brand: e.target.value || undefined, page: 0 })}
-              className="input text-sm mt-1"
-            />
-          )}
-        </div>
-      </FilterSection>
+      {/* Mark — ainult kui täpselt 1 tüüp valitud */}
+      {brands.length > 0 && (
+        <FilterSection title="Mark" open={open.brand} toggle={() => toggle('brand')}>
+          <select
+            value={filters.brand || ''}
+            onChange={e => set('brand', e.target.value || undefined)}
+            className="input text-sm mt-1"
+          >
+            <option value="">Kõik margid</option>
+            {brands.map(b => <option key={b} value={b}>{b}</option>)}
+          </select>
+        </FilterSection>
+      )}
 
       {/* Hind */}
       <FilterSection title="Hind (€)" open={open.price} toggle={() => toggle('price')}>
@@ -156,10 +115,7 @@ export default function Filters({ filters, onChange }) {
 
       {/* Läbisõit */}
       <FilterSection title="Läbisõit (km)" open={open.mileage} toggle={() => toggle('mileage')}>
-        <div className="flex gap-2 mt-1">
-          <input type="number" placeholder="Alates" value={filters.mileage_from || ''} onChange={e => set('mileage_from', e.target.value || undefined)} className="input text-sm w-1/2" />
-          <input type="number" placeholder="Kuni" value={filters.mileage_to || ''} onChange={e => set('mileage_to', e.target.value || undefined)} className="input text-sm w-1/2" />
-        </div>
+        <input type="number" placeholder="Kuni km" value={filters.mileage_to || ''} onChange={e => set('mileage_to', e.target.value || undefined)} className="input text-sm mt-1" />
       </FilterSection>
 
       {/* Seisund */}
@@ -182,26 +138,20 @@ export default function Filters({ filters, onChange }) {
         </div>
       </FilterSection>
 
-      {/* Maakond */}
+      {/* Maakond — multi-select checkboxid */}
       <FilterSection title="Maakond" open={open.county} toggle={() => toggle('county')}>
-        <div className="space-y-2 pt-1 max-h-48 overflow-y-auto">
-          {COUNTIES.map(c => {
-            const selected = (filters.counties || []).includes(c)
-            return (
-              <label key={c} className="flex items-center gap-2.5 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={selected}
-                  onChange={() => {
-                    const cur = filters.counties || []
-                    const next = selected ? cur.filter(v => v !== c) : [...cur, c]
-                    set('counties', next.length ? next : undefined)
-                  }}
-                />
-                <span className="text-sm text-muted-light group-hover:text-white transition-colors">{c}</span>
-              </label>
-            )
-          })}
+        <div className="space-y-2 pt-1 max-h-48 overflow-y-auto pr-1">
+          {COUNTIES.map(c => (
+            <label key={c} className="flex items-center gap-2.5 cursor-pointer group">
+              <input
+                type="checkbox"
+                value={c}
+                checked={(filters.counties || []).includes(c)}
+                onChange={() => toggleCounty(c)}
+              />
+              <span className="text-sm text-muted-light group-hover:text-white transition-colors">{c}</span>
+            </label>
+          ))}
         </div>
       </FilterSection>
     </div>
